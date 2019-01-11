@@ -35,21 +35,21 @@ period          "."
 
     // token definitions. I gave "program" as an example
     // Punctuation
-"("                         DO_RETURN(40);
-")"                         DO_RETURN(41);
-"{"                         DO_RETURN(123);
-"}"                         DO_RETURN(125);
-"["                         DO_RETURN(91);
-"]"                         DO_RETURN(93);
-";"                         DO_RETURN(59);
-","                         DO_RETURN(44);
-{period}                    DO_RETURN(46);
-"+"                         DO_RETURN(43);
-"-"                         DO_RETURN(45);
-"*"                         DO_RETURN(42);
-"/"                         DO_RETURN(47);
-"%"                         DO_RETURN(37);
-"="                         DO_RETURN(61);
+"("                         DO_RETURN('(');
+")"                         DO_RETURN(')');
+"{"                         DO_RETURN('{');
+"}"                         DO_RETURN('}');
+"["                         DO_RETURN('[');
+"]"                         DO_RETURN(']');
+";"                         DO_RETURN(';');
+","                         DO_RETURN(',');
+{period}                    DO_RETURN('.');
+"+"                         DO_RETURN('+');
+"-"                         DO_RETURN('-');
+"*"                         DO_RETURN('*');
+"/"                         DO_RETURN('/');
+"%"                         DO_RETURN('%');
+"="                         DO_RETURN('=');
 "!="                        DO_RETURN(NOT_EQUALS);
 "=="                        DO_RETURN(EQUALS);
 "&&"                        DO_RETURN(AND);
