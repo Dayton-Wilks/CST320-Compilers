@@ -9,6 +9,8 @@
 
 #include "lex.h"
 #include "tokens.h"
+#include "cSymbol.h"
+#include "cSymbolTable.h"
 
 // Macros that can be used to create debug output from the scanner
 // The first one does NOT create debug output, the second does.
@@ -37,8 +39,14 @@ period          "."
     // Punctuation
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
-"{"                         DO_RETURN('{');
-"}"                         DO_RETURN('}');
+"{"                         {
+                                g_symbolTable.IncreaseScope();
+                                DO_RETURN(yytext[0]);
+                            }
+"}"                         {
+                                g_symbolTable.DecreaseScope();
+                                DO_RETURN(yytext[0]);
+                            }
 "["                         DO_RETURN('[');
 "]"                         DO_RETURN(']');
 ";"                         DO_RETURN(';');
@@ -66,12 +74,22 @@ period          "."
 "struct"                    DO_RETURN(STRUCT);
 "array"                     DO_RETURN(ARRAY);
 "return"                    DO_RETURN(RETURN);
-[a-zA-Z_][a-zA-Z0-9_]*      DO_RETURN(IDENTIFIER);
-[+-]*[0-9]+                 DO_RETURN(INT_VAL);
-[+-]*[0-9]*{period}[0-9]+   DO_RETURN(FLOAT_VAL);
+[a-zA-Z_][a-zA-Z0-9_]*      {
+                                yylval.symbol = g_symbolTable.FindLocal(yytext);
+
+                                if (yylval.symbol == nullptr)
+                                {
+                                    yylval.symbol = new cSymbol(yytext);
+                                    g_symbolTable.Insert(yylval.symbol);
+                                }
+
+                                DO_RETURN(IDENTIFIER);
+                            }
+[0-9]+                 DO_RETURN(INT_VAL);
+[0-9]+{period}[0-9]+   DO_RETURN(FLOAT_VAL);
 [ \t\n]+                    
 "//".*                      
-.                          DO_RETURN(JUNK_TOKEN);
+.                           DO_RETURN(JUNK_TOKEN);
 
 %%
 
@@ -82,3 +100,5 @@ int Return(int val)
     printf("Scanned '%s': %d\n", yytext, val);
     return val;
 }
+
+
