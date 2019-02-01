@@ -9,8 +9,10 @@
 //
 
 #include <iostream>
+#include <stdlib.h>
 #include "lex.h"
 #include "astnodes.h"
+#include "cSymbolTable.h"
 
 %}
 
@@ -19,6 +21,7 @@
  /* union defines the type for lexical values */
 %union{
     int             int_val;
+    float           float_val;
     cAstNode*       ast_node;
     cProgramNode*   program_node;
     cBlockNode*     block_node;
@@ -93,19 +96,19 @@ program: PROGRAM block          { $$ = new cProgramNode($2);
 block:  open decls stmts close  {  }
     |   open stmts close        { $$ = new cBlockNode(nullptr, $2); }
 
-open:   '{'                     { /* $$ = g_SymbolTable.IncreaseScope(); */ }
+open:   '{'                     { g_symbolTable.IncreaseScope(); }
 
-close:  '}'                     { /* $$ = g_SymbolTable.DecreaseScope(); */ }
+close:  '}'                     { g_symbolTable.DecreaseScope(); }
 
-decls:      decls decl          {  }
-        |   decl                {  }
-decl:       var_decl ';'        { $$ = $1; }
-        |   struct_decl ';'     {  }
-        |   array_decl ';'      {  }
-        |   func_decl           {  }
-        |   error ';'           {  }
+decls:      decls decl          { std::cerr << "Adding DECLS" << std::endl; $$ = $1; $$->AddChild($2); }
+        |   decl                { std::cerr << "Adding DECL" << std::endl; $$ = new cDeclsNode((cDeclNode*)$1); }
+decl:       var_decl ';'        { std::cerr << "Adding var_decl" << std::endl; $$ = $1; }
+        |   struct_decl ';'     { std::cerr << "Adding struct_decl" << std::endl; }
+        |   array_decl ';'      { std::cerr << "Adding array_decl" << std::endl; }
+        |   func_decl           { std::cerr << "Adding func_decl" << std::endl; }
+        |   error ';'           { std::cerr << "Adding error" << std::endl; }
 
-var_decl:   TYPE_ID IDENTIFIER  {  }
+var_decl:   TYPE_ID IDENTIFIER  { std::cerr << "Creating var_decl" << std::endl; }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 {  }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -128,8 +131,8 @@ paramsspec: paramsspec',' paramspec
 
 paramspec:  var_decl            {  }
 
-stmts:      stmts stmt          {  }
-        |   stmt                { $$ = new cStmtsNode($1); }
+stmts:      stmts stmt          { std::cerr << "stmts:stmts" << std::endl; $$ = $1; $$->Insert($2); }
+        |   stmt                { std::cerr << "stmts:stmt" << std::endl; $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
                                 {  }
@@ -138,7 +141,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   WHILE '(' expr ')' stmt 
                                 {  }
         |   PRINT '(' expr ')' ';'
-                                { $$ = new cPrintNode($3); }
+                                { std::cerr << "stmt:print" << std::endl; $$ = new cPrintNode($3); }
         |   lval '=' expr ';'   {  }
         |   lval '=' func_call ';'   {  }
         |   func_call ';'       {  }
@@ -162,22 +165,22 @@ params:     params',' param     {  }
 
 param:      expr                {  }
 
-expr:       expr EQUALS addit   {  }
-        |   addit               { $$ = $1; }
+expr:       expr EQUALS addit   { std::cerr << "expr:EQUALS" << std::endl; }
+        |   addit               {   }
 
-addit:      addit '+' term      {  }
-        |   addit '-' term      {  }
+addit:      addit '+' term      { std::cerr << "Adding ADDIT +" << std::endl; $$ = new cExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { std::cerr << "Adding ADDIT -" << std::endl; $$ = new cExprNode($1, new cOpNode('-'), $3); }
         |   term                {  }
 
-term:       term '*' fact       {  }
-        |   term '/' fact       {  }
-        |   term '%' fact       {  }
+term:       term '*' fact       { std::cerr << "Adding TERM *" << std::endl; $$ = new cExprNode($1, new cOpNode('*'), $3); }
+        |   term '/' fact       { std::cerr << "Adding TERM */" << std::endl; $$ = new cExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { std::cerr << "Adding TERM *%" << std::endl; $$ = new cExprNode($1, new cOpNode('%'), $3); }
         |   fact                {  }
 
 fact:        '(' expr ')'       {  }
-        |   INT_VAL             { $$ = new cIntExprNode($1); }
-        |   FLOAT_VAL           {  }
-        |   varref              {  }
+        |   INT_VAL             { std::cerr << "Found INT" << std::endl; $$ = new cIntExprNode(yylval.int_val); }
+        |   FLOAT_VAL           { std::cerr << "Found FLOAT" << std::endl; $$ = new cFloatExprNode(yylval.float_val); }
+        |   varref              { std::cerr << "Found VARREF" << std::endl; }
 
 %%
 

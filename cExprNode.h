@@ -17,4 +17,14 @@ class cExprNode : public cStmtNode
 {
     public:
         cExprNode() : cStmtNode() {}
+
+        cExprNode(cAstNode *left, cAstNode *op, cAstNode *right) : cExprNode()
+        {
+            AddChild(left);
+            AddChild(op);
+            AddChild(right);
+        }
+
+        virtual string NodeType() { return string("expr"); }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

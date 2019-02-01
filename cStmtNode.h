@@ -6,7 +6,7 @@
 //
 // NOTE: all statement types must inherit from this class
 //
-// Author: Phil Howard 
+// Author: Phil Howard & Dayton Wilks
 // phil.howard@oit.edu
 //
 
@@ -16,4 +16,6 @@ class cStmtNode : public cAstNode
 {
     public:
         cStmtNode() : cAstNode() {}
+        virtual string NodeType() { return string("stmt"); }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

@@ -23,7 +23,10 @@ class cSymbolTable
 {
     public:
         // Create a symbol table
-        cSymbolTable() {};
+        cSymbolTable() 
+        {
+            //_symbolTableList.insert(new symbolTable_t);
+        };
 
         // Increase the scope: add a level to the nested symbol table
         // Return value is the newly created scope
@@ -78,6 +81,7 @@ class cSymbolTable
         {
             // Get inner most scope from back of list
             symbolTable_t * innerTable = _symbolTableList.back();
+            if (innerTable == NULL) return NULL;
             // search for instance of key
             symbolTable_t::iterator result = innerTable->find(name);
 

@@ -13,13 +13,13 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-//#include "cSymbolTable.h"
+#include "cSymbolTable.h"
 #include "lex.h"
 #include "astnodes.h"
 #include "langparse.h"
 
 // define global variables
-//cSymbolTable g_SymbolTable;
+cSymbolTable g_symbolTable;
 long long cSymbol::nextId;
 
 // takes two string args: input_file, and output_file
