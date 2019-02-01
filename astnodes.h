@@ -24,4 +24,6 @@
 #include "cExprNode.h"
 #include "cIntExprNode.h"
 #include "cFloatExprNode.h"
+#include "cVarDeclNode.h"
+#include "cVarRefNode.h"
 

@@ -26,6 +26,10 @@ class cSymbolTable
         cSymbolTable() 
         {
             //_symbolTableList.insert(new symbolTable_t);
+            IncreaseScope();
+            this->Insert(new cSymbol("char"));
+            this->Insert(new cSymbol("int"));
+            this->Insert(new cSymbol("float"));
         };
 
         // Increase the scope: add a level to the nested symbol table

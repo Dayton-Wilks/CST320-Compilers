@@ -41,11 +41,11 @@ period          "."
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
 "{"                         {
-                                //g_symbolTable.IncreaseScope();
+                                g_symbolTable.IncreaseScope();
                                 DO_RETURN(yytext[0]);
                             }
 "}"                         {
-                                //g_symbolTable.DecreaseScope();
+                                g_symbolTable.DecreaseScope();
                                 DO_RETURN(yytext[0]);
                             }
 "["                         DO_RETURN('[');
@@ -69,9 +69,9 @@ period          "."
 "endif"                     DO_RETURN(ENDIF);
 "while"                     DO_RETURN(WHILE);
 "print"                     DO_RETURN(PRINT);
-"int"                       DO_RETURN(TYPE_ID);
-"float"                     DO_RETURN(TYPE_ID);
-"char"                      DO_RETURN(TYPE_ID);
+"int"                       { yylval.symbol = g_symbolTable.Find("int"); DO_RETURN(TYPE_ID); }
+"float"                     { yylval.symbol = g_symbolTable.Find("float"); DO_RETURN(TYPE_ID); }
+"char"                      { yylval.symbol = g_symbolTable.Find("char"); DO_RETURN(TYPE_ID); }
 "struct"                    DO_RETURN(STRUCT);
 "array"                     DO_RETURN(ARRAY);
 "return"                    DO_RETURN(RETURN);

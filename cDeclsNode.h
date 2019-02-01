@@ -15,7 +15,7 @@ class cDeclsNode : public cAstNode
 {
     public:
         // param is the first decl in this decls
-        cDeclsNode(cDeclNode *decl) : cAstNode()
+        cDeclsNode(cAstNode *decl) : cAstNode()
         {
             AddChild(decl);
         }
