@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <string>
+using std::string;
 #include "lex.h"
 #include "astnodes.h"
 #include "cSymbolTable.h"
@@ -31,6 +33,7 @@
     cExprNode*      expr_node;
     cIntExprNode*   int_node;
     cSymbol*        symbol;
+    cVarExprNode*   varexpr_node;
     }
 
 %{
@@ -75,14 +78,14 @@
 %type <ast_node> paramspec
 %type <stmts_node> stmts
 %type <stmt_node> stmt
-%type <ast_node> lval
+%type <varexpr_node> lval
 %type <ast_node> params
 %type <ast_node> param
 %type <expr_node> expr
 %type <expr_node> addit
 %type <expr_node> term
 %type <expr_node> fact
-%type <ast_node> varref
+%type <varexpr_node> varref
 %type <symbol> varpart
 
 %%
@@ -109,7 +112,16 @@ decl:       var_decl ';'        { DebugPrint("Adding var_decl");        $$ = $1;
         |   func_decl           { DebugPrint("Adding func_decl"); }
         |   error ';'           { DebugPrint("Adding error"); }
 
-var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");      $$ = new cVarDeclNode($1); $$->AddChild(yylval.symbol); }
+var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");      
+                                  $$ = new cVarDeclNode($1); 
+                                  string temp = yylval.symbol->GetName();
+                                  if (g_symbolTable.FindLocal(temp) == nullptr) 
+                                  {
+                                    yylval.symbol = new cSymbol(temp);
+                                    g_symbolTable.Insert(yylval.symbol);
+                                  }
+                                  $$->AddChild(yylval.symbol); 
+                                }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 {  }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -145,7 +157,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
                                 { DebugPrint("stmt:print");         $$ = new cPrintNode($3); }
         |   lval '=' expr ';'   { DebugPrint("Add Assign:EXPR");    $$ = new cAssignNode($1, $3); }
         |   lval '=' func_call ';'   
-                                { DebugPrint("Add Assign:FUNC");    $$ = new cAssignNode($1, $3); }
+                                { DebugPrint("Add Assign:FUNC");    /*$$ = new cAssignNode($1, $3);*/ }
         |   func_call ';'       {  }
         |   block               {  }
         |   RETURN expr ';'     { DebugPrint("Creating RETURN");    $$ = new cReturnNode($2); }

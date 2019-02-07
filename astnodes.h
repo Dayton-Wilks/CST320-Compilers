@@ -19,7 +19,6 @@
 #include "cDeclsNode.h"
 #include "cBlockNode.h"
 #include "cProgramNode.h"
-#include "cOpNode.h"
 #include "cPrintNode.h"
 #include "cExprNode.h"
 #include "cIntExprNode.h"
@@ -30,4 +29,4 @@
 #include "cReturnNode.h"
 #include "cWhileNode.h"
 #include "cAssignNode.h"
-
+#include "cOpNode.h"

@@ -8,7 +8,7 @@
 //
 #include <stdlib.h>
 #include "lex.h"
-//#include "tokens.h"
+#include "astnodes.h"
 #include "langparse.h"
 #include "cSymbol.h"
 #include "cSymbolTable.h"
@@ -76,10 +76,11 @@ period          "."
 "array"                     DO_RETURN(ARRAY);
 "return"                    DO_RETURN(RETURN);
 [a-zA-Z_][a-zA-Z0-9_]*      {
-                                yylval.symbol = g_symbolTable.FindLocal(yytext);
+                                yylval.symbol = g_symbolTable.Find(yytext);
 
                                 if (yylval.symbol == nullptr)
                                 {
+                                    //fprintf(stderr, "Add ST %s\n\n", yytext);
                                     yylval.symbol = new cSymbol(yytext);
                                     g_symbolTable.Insert(yylval.symbol);
                                 }
