@@ -27,7 +27,7 @@
     cProgramNode*   program_node;
     cBlockNode*     block_node;
     cStmtsNode*     stmts_node;
-    cPrintNode*     stmt_node;
+    cStmtNode*      stmt_node;
     cExprNode*      expr_node;
     cIntExprNode*   int_node;
     cSymbol*        symbol;
@@ -101,15 +101,15 @@ open:   '{'                     { g_symbolTable.IncreaseScope(); }
 
 close:  '}'                     { g_symbolTable.DecreaseScope(); }
 
-decls:      decls decl          { DebugPrint("Adding DECLS"); $$ = $1; $$->AddChild($2); }
-        |   decl                { DebugPrint("Adding DECL"); $$ = new cDeclsNode($1); }
-decl:       var_decl ';'        { DebugPrint("Adding var_decl"); $$ = $1; }
+decls:      decls decl          { DebugPrint("Adding DECLS");           $$ = $1; $$->AddChild($2); }
+        |   decl                { DebugPrint("Adding DECL");            $$ = new cDeclsNode($1); }
+decl:       var_decl ';'        { DebugPrint("Adding var_decl");        $$ = $1; }
         |   struct_decl ';'     { DebugPrint("Adding struct_decl"); }
         |   array_decl ';'      { DebugPrint("Adding array_decl"); }
         |   func_decl           { DebugPrint("Adding func_decl"); }
         |   error ';'           { DebugPrint("Adding error"); }
 
-var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl"); $$ = new cVarDeclNode($1); $$->AddChild(yylval.symbol); }
+var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");      $$ = new cVarDeclNode($1); $$->AddChild(yylval.symbol); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 {  }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -132,34 +132,36 @@ paramsspec: paramsspec',' paramspec
 
 paramspec:  var_decl            {  }
 
-stmts:      stmts stmt          { DebugPrint("stmts:stmts"); $$ = $1; $$->Insert($2); }
-        |   stmt                { DebugPrint("stmts:stmt"); $$ = new cStmtsNode($1); }
+stmts:      stmts stmt          { DebugPrint("stmts:stmts");        $$ = $1; $$->Insert($2); }
+        |   stmt                { DebugPrint("stmts:stmt");         $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
-                                {  }
+                                { DebugPrint("Creating IF/ENDIF");  $$ = new cIfNode($3, $5, nullptr); }
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
-                                {  }
+                                { DebugPrint("Creating IF/ELSE");   $$ = new cIfNode($3, $5, $7); }
         |   WHILE '(' expr ')' stmt 
-                                {  }
+                                { DebugPrint("Creating WHILE");     $$ = new cWhileNode($3, $5);}
         |   PRINT '(' expr ')' ';'
-                                { DebugPrint("stmt:print"); $$ = new cPrintNode($3); }
-        |   lval '=' expr ';'   {  }
-        |   lval '=' func_call ';'   {  }
+                                { DebugPrint("stmt:print");         $$ = new cPrintNode($3); }
+        |   lval '=' expr ';'   { DebugPrint("Add Assign:EXPR");    $$ = new cAssignNode($1, $3); }
+        |   lval '=' func_call ';'   
+                                { DebugPrint("Add Assign:FUNC");    $$ = new cAssignNode($1, $3); }
         |   func_call ';'       {  }
         |   block               {  }
-        |   RETURN expr ';'     {  }
-        |   error ';'           {}
+        |   RETURN expr ';'     { DebugPrint("Creating RETURN");    $$ = new cReturnNode($2); }
+        |   error ';'           {   }
 
-func_call:  IDENTIFIER '(' params ')' {  }
+func_call:  IDENTIFIER '(' params ')' 
+                                {  }
         |   IDENTIFIER '(' ')'  {  }
 
 varref:   varref '.' varpart    {  }
         | varref '[' expr ']'   {  }
-        | varpart               {  }
+        | varpart               { DebugPrint("Found VARREF");       $$ = new cVarExprNode($1); }
 
-varpart:  IDENTIFIER            {  }
+varpart:  IDENTIFIER            { DebugPrint("Found VARPART");      $$ = $1; }
 
-lval:     varref                {  }
+lval:     varref                { DebugPrint("Found LVAL");         $$ = $1; }
 
 params:     params',' param     {  }
         |   param               {  }
@@ -169,19 +171,19 @@ param:      expr                {  }
 expr:       expr EQUALS addit   { DebugPrint("expr:EQUALS"); }
         |   addit               {   }
 
-addit:      addit '+' term      { DebugPrint("Adding ADDIT +"); $$ = new cExprNode($1, new cOpNode('+'), $3); }
-        |   addit '-' term      { DebugPrint("Adding ADDIT -"); $$ = new cExprNode($1, new cOpNode('-'), $3); }
+addit:      addit '+' term      { DebugPrint("Adding ADDIT +");     $$ = new cExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { DebugPrint("Adding ADDIT -");     $$ = new cExprNode($1, new cOpNode('-'), $3); }
         |   term                {  }
 
-term:       term '*' fact       { DebugPrint("Adding TERM *"); $$ = new cExprNode($1, new cOpNode('*'), $3); }
-        |   term '/' fact       { DebugPrint("Adding TERM */"); $$ = new cExprNode($1, new cOpNode('/'), $3); }
-        |   term '%' fact       { DebugPrint("Adding TERM *%"); $$ = new cExprNode($1, new cOpNode('%'), $3); }
+term:       term '*' fact       { DebugPrint("Adding TERM *");      $$ = new cExprNode($1, new cOpNode('*'), $3); }
+        |   term '/' fact       { DebugPrint("Adding TERM */");     $$ = new cExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { DebugPrint("Adding TERM *%");     $$ = new cExprNode($1, new cOpNode('%'), $3); }
         |   fact                {  }
 
-fact:        '(' expr ')'       {  }
-        |   INT_VAL             { DebugPrint("Found INT"); $$ = new cIntExprNode(yylval.int_val); }
-        |   FLOAT_VAL           { DebugPrint("Found FLOAT"); $$ = new cFloatExprNode(yylval.float_val); }
-        |   varref              { DebugPrint("Found VARREF"); $$ = new cVarRefNode($1); }
+fact:        '(' expr ')'       { DebugPrint("Adding (expr)");      $$ = $2; }
+        |   INT_VAL             { DebugPrint("Found INT");          $$ = new cIntExprNode(yylval.int_val); }
+        |   FLOAT_VAL           { DebugPrint("Found FLOAT");        $$ = new cFloatExprNode(yylval.float_val); }
+        |   varref              { DebugPrint("Found VARREF");       $$ = $1; }
 
 %%
 
