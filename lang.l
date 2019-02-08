@@ -84,7 +84,7 @@ period          "."
                                     yylval.symbol = new cSymbol(yytext);
                                     g_symbolTable.Insert(yylval.symbol);
                                 }
-
+                                if (yylval.symbol->GetType() != VAR_TYPE) DO_RETURN(TYPE_ID);
                                 DO_RETURN(IDENTIFIER);
                             }
 [0-9]+                      { yylval.int_val = atoi(yytext); DO_RETURN(INT_VAL); }

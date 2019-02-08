@@ -12,14 +12,18 @@
 #include <string>
 
 using std::string;
-
 #include "cAstNode.h"
+
+
+#define VAR_TYPE 0
+#define STRUCT_TYPE 1
+#define ARRAY_TYPE 2
 
 class cSymbol : public cAstNode
 {
     public:
         // param is name of symbol
-        cSymbol(string name) : cAstNode()
+        cSymbol(string name, int type = VAR_TYPE) : cAstNode()
         {
             m_id = ++nextId;        // get next available ID
             m_name = name;
@@ -27,6 +31,8 @@ class cSymbol : public cAstNode
 
         // return name of symbol
         string GetName() { return m_name; }
+        short  GetType() { return m_type; }
+        void   SetType(int v) { m_type = v; } 
 
         virtual string AttributesToString()
         {
@@ -41,4 +47,5 @@ class cSymbol : public cAstNode
         static long long nextId;        // Next avail symbol ID
         long long m_id;                 // Unique ID for this symbol
         string m_name;                  // name of symbol
+        int m_type;
 };

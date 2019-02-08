@@ -11,11 +11,11 @@
 #include "cAstNode.h"
 #include "cDeclNode.h"
 
-class cDeclsNode : public cAstNode
+class cDeclsNode : public cDeclNode
 {
     public:
         // param is the first decl in this decls
-        cDeclsNode(cAstNode *decl) : cAstNode()
+        cDeclsNode(cAstNode *decl) : cDeclNode()
         {
             AddChild(decl);
         }
