@@ -4,8 +4,7 @@
 //
 // Parser definition file. bison uses this file to generate the parser.
 //
-// Author: Phil Howard 
-// phil.howard@oit.edu
+// Author: Phil Howard & Dayton Wilks
 //
 
 #include <iostream>
@@ -15,7 +14,6 @@ using std::string;
 #include "lex.h"
 #include "astnodes.h"
 #include "cSymbolTable.h"
-#include "cDebugPrint.h"
 
 %}
 
@@ -108,15 +106,15 @@ open:   '{'                     { g_symbolTable.IncreaseScope(); }
 
 close:  '}'                     { g_symbolTable.DecreaseScope(); }
 
-decls:      decls decl          { DebugPrint("Adding DECLS");           $$ = $1; $$->AddChild($2); }
-        |   decl                { DebugPrint("Adding DECL");            $$ = new cDeclsNode($1); }
-decl:       var_decl ';'        { DebugPrint("Adding var_decl");        $$ = $1; }
-        |   struct_decl ';'     { DebugPrint("Adding struct_decl");     $$ = $1; }
-        |   array_decl ';'      { DebugPrint("Adding array_decl");      $$ = $1; }
-        |   func_decl           { DebugPrint("Adding func_decl");       $$ = $1; }
-        |   error ';'           { DebugPrint("Adding error"); }
+decls:      decls decl          { $$ = $1; $$->AddChild($2); }
+        |   decl                { $$ = new cDeclsNode($1); }
+decl:       var_decl ';'        { $$ = $1; }
+        |   struct_decl ';'     { $$ = $1; }
+        |   array_decl ';'      { $$ = $1; }
+        |   func_decl           { $$ = $1; }
+        |   error ';'           {   }
 
-var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");      
+var_decl:   TYPE_ID IDENTIFIER  { ;      
                                   $$ = new cVarDeclNode($1); 
                                   string temp = yylval.symbol->GetName();
                                   if (g_symbolTable.FindLocal(temp) == nullptr) 
@@ -127,79 +125,91 @@ var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");
                                   $$->AddChild(yylval.symbol); 
                                 }
 struct_decl:  STRUCT open decls close IDENTIFIER    
-                                { DebugPrint("Creating struct_decl"); $$ = new cStructDeclNode($3, $5); $5->SetType(STRUCT); }
+                                { $$ = new cStructDeclNode($3,$5); $5->SetType(STRUCT); }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
-                                { DebugPrint("Created Array");       $$ = new cArrayDeclNode($2, $4, $6); $6->SetType(ARRAY); }
+                                { 
+                                    $$ = new cArrayDeclNode($2, $4, $6); 
+                                    $6->SetType(ARRAY); 
+                                }
 
 func_decl:  func_header ';'
-                                { DebugPrint("func_decl 0");        g_symbolTable.DecreaseScope(); }
+                                { g_symbolTable.DecreaseScope(); }
         |   func_header  '{' decls stmts '}'
-                                { DebugPrint("func_decl 1");        $$->Insert($3); $$->Insert($4); g_symbolTable.DecreaseScope(); }
+                                { 
+                                    $$->Insert($3); $$->Insert($4); 
+                                    g_symbolTable.DecreaseScope(); 
+                                }
         |   func_header  '{' stmts '}'
-                                { DebugPrint("func_decl 2");        $$ = $1; $$->Insert($3); g_symbolTable.DecreaseScope(); }
+                                { 
+                                    $$ = $1; $$->Insert($3); 
+                                    g_symbolTable.DecreaseScope(); 
+                                }
 func_header: func_prefix paramsspec ')'
                                 { $$ = $1; $1->Insert($2); }
         |    func_prefix ')'    {  }
 func_prefix: TYPE_ID IDENTIFIER '('
-                                { DebugPrint("stmts:stmts");        $$ = new cFuncDeclNode($1, $2); g_symbolTable.IncreaseScope(); }
+                                { 
+                                    $$ = new cFuncDeclNode($1, $2); 
+                                    g_symbolTable.IncreaseScope(); 
+                                }
 paramsspec: paramsspec ',' paramspec 
-                                { DebugPrint("stmts:stmts");        $$ = $1; $$->Insert($3); }
-        |   paramspec           { DebugPrint("stmts:stmts");        $$ = new cParamsNode($1); }
+                                { $$ = $1; $$->Insert($3); }
+        |   paramspec           { $$ = new cParamsNode($1); }
 
 paramspec:  var_decl            {  }
 
-stmts:      stmts stmt          { DebugPrint("stmts:stmts");        $$ = $1; $$->Insert($2); }
-        |   stmt                { DebugPrint("stmts:stmt");         $$ = new cStmtsNode($1); }
+stmts:      stmts stmt          { $$ = $1; $$->Insert($2); }
+        |   stmt                { $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
-                                { DebugPrint("Creating IF/ENDIF");  $$ = new cIfNode($3, $5, nullptr); }
+                                { $$ = new cIfNode($3, $5, nullptr); }
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
-                                { DebugPrint("Creating IF/ELSE");   $$ = new cIfNode($3, $5, $7); }
+                                { $$ = new cIfNode($3, $5, $7); }
         |   WHILE '(' expr ')' stmt 
-                                { DebugPrint("Creating WHILE");     $$ = new cWhileNode($3, $5);}
+                                { $$ = new cWhileNode($3, $5);}
         |   PRINT '(' expr ')' ';'
-                                { DebugPrint("stmt:print");         $$ = new cPrintNode($3); }
-        |   lval '=' expr ';'   { DebugPrint("Add Assign:EXPR");    $$ = new cAssignNode($1, $3); }
+                                { $$ = new cPrintNode($3); }
+        |   lval '=' expr ';'   { $$ = new cAssignNode($1, $3); }
         |   lval '=' func_call ';'   
-                                { DebugPrint("Add Assign:FUNC");    $$ = new cAssignNode($1, $3); }
+                                { $$ = new cAssignNode($1, $3); }
         |   func_call ';'       {  }
         |   block               {  }
-        |   RETURN expr ';'     { DebugPrint("Creating RETURN");    $$ = new cReturnNode($2); }
+        |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {   }
 
 func_call:  IDENTIFIER '(' params ')' 
-                                { DebugPrint("Found FuncCall +");   $$ = new cFuncExprNode($1, $3); }
-        |   IDENTIFIER '(' ')'  { DebugPrint("Found FuncCall 0");   $$ = new cFuncExprNode($1, nullptr); }
+                                { $$ = new cFuncExprNode($1, $3); }
+        |   IDENTIFIER '(' ')'  { $$ = new cFuncExprNode($1, nullptr); }
 
-varref:   varref '.' varpart    { DebugPrint("Found VARREF .");     $$ = $1; $$->Insert($3); }
-        | varref '[' expr ']'   { DebugPrint("Found VARREF []");    $$ = $1; $$->Insert($3); }
-        | varpart               { DebugPrint("Found VARREF");       $$ = new cVarExprNode($1); }
+varref:   varref '.' varpart    { $$ = $1; $$->Insert($3); }
+        | varref '[' expr ']'   { $$ = $1; $$->Insert($3); }
+        | varpart               { $$ = new cVarExprNode($1); }
 
-varpart:  IDENTIFIER            { DebugPrint("Found VARPART");      $$ = $1; }
+varpart:  IDENTIFIER            { $$ = $1; }
 
-lval:     varref                { DebugPrint("Found LVAL");         $$ = $1; }
+lval:     varref                { $$ = $1; }
 
-params:     params ',' param    { DebugPrint("Found Params");       $$ = $1; $$->Insert($3); }
-        |   param               { DebugPrint("Found Param");        $$ = new cParamListNode($1); }
+params:     params ',' param    { $$ = $1; $$->Insert($3); }
+        |   param               { $$ = new cParamListNode($1); }
 
 param:      expr                {  }
 
-expr:       expr EQUALS addit   { DebugPrint("expr:EQUALS");        $$ = new cBinaryExprNode($1, new cOpNode(EQUALS), $3); }
+expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3); }
         |   addit               {   }
 
-addit:      addit '+' term      { DebugPrint("Adding ADDIT +");     $$ = new cExprNode($1, new cOpNode('+'), $3); }
-        |   addit '-' term      { DebugPrint("Adding ADDIT -");     $$ = new cExprNode($1, new cOpNode('-'), $3); }
+addit:      addit '+' term      { $$ = new cExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { $$ = new cExprNode($1, new cOpNode('-'), $3); }
         |   term                {  }
 
-term:       term '*' fact       { DebugPrint("Adding TERM *");      $$ = new cExprNode($1, new cOpNode('*'), $3); }
-        |   term '/' fact       { DebugPrint("Adding TERM */");     $$ = new cExprNode($1, new cOpNode('/'), $3); }
-        |   term '%' fact       { DebugPrint("Adding TERM *%");     $$ = new cExprNode($1, new cOpNode('%'), $3); }
+term:       term '*' fact       { $$ = new cExprNode($1, new cOpNode('*'), $3); }
+        |   term '/' fact       { $$ = new cExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { $$ = new cExprNode($1, new cOpNode('%'), $3); }
         |   fact                {  }
 
-fact:        '(' expr ')'       { DebugPrint("Adding (expr)");      $$ = $2; }
-        |   INT_VAL             { DebugPrint("Found INT");          $$ = new cIntExprNode(yylval.int_val); }
-        |   FLOAT_VAL           { DebugPrint("Found FLOAT");        $$ = new cFloatExprNode(yylval.float_val); }
-        |   varref              { DebugPrint("Found VARREF");       $$ = $1; }
+fact:        '(' expr ')'       { $$ = $2; }
+        |   INT_VAL             { $$ = new cIntExprNode(yylval.int_val); }
+        |   FLOAT_VAL           { $$ = new cFloatExprNode(yylval.float_val); }
+        |   varref              { $$ = $1; }
 
 %%
 

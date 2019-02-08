@@ -1,11 +1,11 @@
 #pragma once
 //**************************************
-// 
+// cArrayDeclNode.h
 //
-// 
+// Class for declaring an array 
 //
 // Author: Dayton Wilks
-//
+// Date: 2/8/18
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
@@ -14,7 +14,6 @@
 class cArrayDeclNode : public cDeclNode
 {
     public:
-        // param is the first decl in this decls
         cArrayDeclNode(cSymbol * type, int size,  cSymbol * name) : cDeclNode()
         {
             AddChild(type);
@@ -22,7 +21,6 @@ class cArrayDeclNode : public cDeclNode
             AddChild(name);
         }
 
-        // Add a decl to the list
         void Insert(cAstNode * node)
         {
             AddChild(node);

@@ -29,15 +29,10 @@ int Return(int val);
 %option nounput
 %option yylineno
 
-
-    /* definitions go here. period is an example. */
-    /* NOTE: You do not need to use definitions */
 period          "."
 
 %%
 
-    // token definitions. I gave "program" as an example
-    // Punctuation
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
 "{"                         {
@@ -69,9 +64,18 @@ period          "."
 "endif"                     DO_RETURN(ENDIF);
 "while"                     DO_RETURN(WHILE);
 "print"                     DO_RETURN(PRINT);
-"int"                       { yylval.symbol = g_symbolTable.Find("int"); DO_RETURN(TYPE_ID); }
-"float"                     { yylval.symbol = g_symbolTable.Find("float"); DO_RETURN(TYPE_ID); }
-"char"                      { yylval.symbol = g_symbolTable.Find("char"); DO_RETURN(TYPE_ID); }
+"int"                       { 
+                                yylval.symbol = g_symbolTable.Find("int"); 
+                                DO_RETURN(TYPE_ID); 
+                            }
+"float"                     { 
+                                yylval.symbol = g_symbolTable.Find("float"); 
+                                DO_RETURN(TYPE_ID); 
+                            }
+"char"                      { 
+                                yylval.symbol = g_symbolTable.Find("char"); 
+                                DO_RETURN(TYPE_ID); 
+                            }
 "struct"                    DO_RETURN(STRUCT);
 "array"                     DO_RETURN(ARRAY);
 "return"                    DO_RETURN(RETURN);
@@ -80,15 +84,22 @@ period          "."
 
                                 if (yylval.symbol == nullptr)
                                 {
-                                    //fprintf(stderr, "Add ST %s\n\n", yytext);
                                     yylval.symbol = new cSymbol(yytext);
                                     g_symbolTable.Insert(yylval.symbol);
                                 }
-                                if (yylval.symbol->GetType() != VAR_TYPE) DO_RETURN(TYPE_ID);
+
+                                if (yylval.symbol->GetType() != VAR_TYPE) 
+                                    DO_RETURN(TYPE_ID);
                                 DO_RETURN(IDENTIFIER);
                             }
-[0-9]+                      { yylval.int_val = atoi(yytext); DO_RETURN(INT_VAL); }
-[0-9]+{period}[0-9]+        { yylval.float_val = atof(yytext); DO_RETURN(FLOAT_VAL); }
+[0-9]+                      { 
+                                yylval.int_val = atoi(yytext); 
+                                DO_RETURN(INT_VAL); 
+                            }
+[0-9]+{period}[0-9]+        { 
+                                yylval.float_val = atof(yytext); 
+                                DO_RETURN(FLOAT_VAL); 
+                            }
 [ \t\n]+                    
 "//".*                      
 .                           DO_RETURN(JUNK_TOKEN);

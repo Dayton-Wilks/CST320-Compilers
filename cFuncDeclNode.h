@@ -1,8 +1,8 @@
 #pragma once
 //**************************************
-// cDeclsNode.h
+// cFuncDeclNode.h
 //
-// 
+// Creates a function declaration
 //
 // Author: Dayton Wilks
 //

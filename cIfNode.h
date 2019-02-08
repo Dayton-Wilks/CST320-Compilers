@@ -1,5 +1,16 @@
+#pragma once
+//**************************************
+// cIfNode.h
+//
+// Defines an AST node for an if operation.
+//
+// Inherits from cStmtNode so that if can be used anywhere 
+// statements are used.
+//
+// Author: Dayton Wilks
+//
+
 #include "cAstNode.h"
-#include "cStmtNode.h"
 
 class cIfNode : public cStmtNode
 {

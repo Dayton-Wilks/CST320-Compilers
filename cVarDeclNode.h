@@ -1,26 +1,24 @@
 #pragma once
 //**************************************
-// cDeclsNode.h
+// cVarDeclNode.h
 //
-// 
+// Defines an AST node for a variable declaration, inherits from cDeclnNode 
+// so a var delc can be used anywhere a decl can be made.
 //
 // Author: Dayton Wilks
 //
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
-#include "cSymbol.h"
 
 class cVarDeclNode : public cDeclNode
 {
     public:
-        // param is the first decl in this decls
         cVarDeclNode(cSymbol * sym) : cDeclNode()
         {
             AddChild(sym);
         }
 
-        // Add a decl to the list
         void Insert(cSymbol *decl)
         {
             AddChild(decl);

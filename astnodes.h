@@ -5,10 +5,8 @@
 // Single place that includes all the ast nodes.
 // Useful for lang.y and lang.l
 //
-// Author: Phil Howard 
-// phil.howard@oit.edu
-//
-// Date: Jan. 18, 2015
+// Author: Phil Howard & Dayton Wilks
+// Date: 2/8/19
 //
 
 #include "cAstNode.h"

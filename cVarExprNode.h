@@ -1,3 +1,13 @@
+#pragma once
+//**************************************
+// cVarExprNode.h
+//
+// Defines an AST node for a var expr, inherits from cExprNode 
+// so a var expr can be used anywhere a expr can.
+//
+// Author: Dayton Wilks
+//
+
 #include "cAstNode.h"
 #include "cExprNode.h"
 #include "cSymbol.h"
@@ -5,13 +15,11 @@
 class cVarExprNode : public cExprNode
 {
     public:
-        // param is the first decl in this decls
         cVarExprNode(cSymbol * sym) : cExprNode()
         {
             AddChild(sym);
         }
 
-        // Add a decl to the list
         void Insert(cAstNode * node)
         {
             AddChild(node);

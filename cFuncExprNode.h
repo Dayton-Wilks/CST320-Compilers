@@ -1,10 +1,10 @@
 #pragma once
 //**************************************
-// cIntExprNode.h
+// cFuncExprNode.h
 //
-// Defines an AST node for an integer constant (literals).
+// Defines an AST node for an function.
 //
-// Inherits from cExprNode so that integer constants can be used anywhere 
+// Inherits from cExprNode so that function can be used anywhere 
 // expressions are used.
 //
 // Author: Dayton Wilks
