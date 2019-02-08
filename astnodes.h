@@ -35,3 +35,4 @@
 #include "cStructDeclNode.h"
 #include "cParamsNode.h"
 #include "cFuncExprNode.h"
+#include "cBinaryExprNode.h"

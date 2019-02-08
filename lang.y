@@ -184,7 +184,7 @@ params:     params ',' param    { DebugPrint("Found Params");       $$ = $1; $$-
 
 param:      expr                {  }
 
-expr:       expr EQUALS addit   { DebugPrint("expr:EQUALS"); }
+expr:       expr EQUALS addit   { DebugPrint("expr:EQUALS");        $$ = new cBinaryExprNode($1, new cOpNode(EQUALS), $3); }
         |   addit               {   }
 
 addit:      addit '+' term      { DebugPrint("Adding ADDIT +");     $$ = new cExprNode($1, new cOpNode('+'), $3); }
