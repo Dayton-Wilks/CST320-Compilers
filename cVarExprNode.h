@@ -12,9 +12,9 @@ class cVarExprNode : public cExprNode
         }
 
         // Add a decl to the list
-        void Insert(cSymbol *sym)
+        void Insert(cAstNode * node)
         {
-            AddChild(sym);
+            AddChild(node);
         }
 
         virtual string NodeType() { return string("varref"); }

@@ -36,3 +36,4 @@
 #include "cParamsNode.h"
 #include "cFuncExprNode.h"
 #include "cBinaryExprNode.h"
+#include "cArrayDeclNode.h"

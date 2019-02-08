@@ -73,7 +73,7 @@ using std::string;
 %type <decl_node> decl
 %type <decl_node> var_decl
 %type <decl_node> struct_decl
-%type <ast_node> array_decl
+%type <decl_node> array_decl
 %type <func_decl> func_decl
 %type <func_decl> func_header
 %type <func_decl> func_prefix
@@ -112,7 +112,7 @@ decls:      decls decl          { DebugPrint("Adding DECLS");           $$ = $1;
         |   decl                { DebugPrint("Adding DECL");            $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { DebugPrint("Adding var_decl");        $$ = $1; }
         |   struct_decl ';'     { DebugPrint("Adding struct_decl");     $$ = $1; }
-        |   array_decl ';'      { DebugPrint("Adding array_decl"); }
+        |   array_decl ';'      { DebugPrint("Adding array_decl");      $$ = $1; }
         |   func_decl           { DebugPrint("Adding func_decl");       $$ = $1; }
         |   error ';'           { DebugPrint("Adding error"); }
 
@@ -129,7 +129,7 @@ var_decl:   TYPE_ID IDENTIFIER  { DebugPrint("Creating var_decl");
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 { DebugPrint("Creating struct_decl"); $$ = new cStructDeclNode($3, $5); $5->SetType(STRUCT); }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
-                                {  }
+                                { DebugPrint("Created Array");       $$ = new cArrayDeclNode($2, $4, $6); $6->SetType(ARRAY); }
 
 func_decl:  func_header ';'
                                 { DebugPrint("func_decl 0");        g_symbolTable.DecreaseScope(); }
@@ -171,8 +171,8 @@ func_call:  IDENTIFIER '(' params ')'
                                 { DebugPrint("Found FuncCall +");   $$ = new cFuncExprNode($1, $3); }
         |   IDENTIFIER '(' ')'  { DebugPrint("Found FuncCall 0");   $$ = new cFuncExprNode($1, nullptr); }
 
-varref:   varref '.' varpart    { DebugPrint("Found VARREF .");     $$ = $1; $$->Insert($3);}
-        | varref '[' expr ']'   {  }
+varref:   varref '.' varpart    { DebugPrint("Found VARREF .");     $$ = $1; $$->Insert($3); }
+        | varref '[' expr ']'   { DebugPrint("Found VARREF []");    $$ = $1; $$->Insert($3); }
         | varpart               { DebugPrint("Found VARREF");       $$ = new cVarExprNode($1); }
 
 varpart:  IDENTIFIER            { DebugPrint("Found VARPART");      $$ = $1; }
