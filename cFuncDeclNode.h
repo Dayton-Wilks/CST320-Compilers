@@ -9,7 +9,7 @@
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
-#include "cSymbol.h"
+//#include "cSymbol.h"
 
 class cFuncDeclNode : public cDeclNode
 {

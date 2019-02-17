@@ -39,7 +39,19 @@ using std::string;
     }
 
 %{
+
+    bool g_semanticErrorHappened = false;
+
+    #define CHECK_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; } }
+
+    #define PROP_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; YYERROR; } }
+
     int yyerror(const char *msg);
+
+    // Function that gets called when a semantic error happens
+    void SemanticError(std::string error);
 
     cAstNode *yyast_root;
 %}
@@ -106,7 +118,7 @@ open:   '{'                     { g_symbolTable.IncreaseScope(); }
 
 close:  '}'                     { g_symbolTable.DecreaseScope(); }
 
-decls:      decls decl          { $$ = $1; $$->AddChild($2); }
+decls:      decls decl          { $$ = $1; $$->Insert($2); }
         |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     { $$ = $1; }
@@ -114,16 +126,7 @@ decl:       var_decl ';'        { $$ = $1; }
         |   func_decl           { $$ = $1; }
         |   error ';'           {   }
 
-var_decl:   TYPE_ID IDENTIFIER  { ;      
-                                  $$ = new cVarDeclNode($1); 
-                                  string temp = yylval.symbol->GetName();
-                                  if (g_symbolTable.FindLocal(temp) == nullptr) 
-                                  {
-                                    yylval.symbol = new cSymbol(temp);
-                                    g_symbolTable.Insert(yylval.symbol);
-                                  }
-                                  $$->AddChild(yylval.symbol); 
-                                }
+var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, yylval.symbol); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 { $$ = new cStructDeclNode($3,$5); $5->SetType(STRUCT); }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -220,5 +223,14 @@ int yyerror(const char *msg)
         << yytext << " on line " << yylineno << "\n";
 
     return 0;
+}
+
+// Function that gets called when a semantic error happens
+void SemanticError(std::string error)
+{
+    std::cout << "ERROR: " << error << " on line " 
+              << yylineno << "\n";
+    g_semanticErrorHappened = true;
+    yynerrs++;
 }
 

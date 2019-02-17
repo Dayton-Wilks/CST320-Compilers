@@ -8,15 +8,27 @@
 // Author: Dayton Wilks
 //
 
+#include <string>
+using std::string;
 #include "cAstNode.h"
 #include "cDeclNode.h"
+#include "cSymbol.h"
+#include "cSymbolTable.h"
 
 class cVarDeclNode : public cDeclNode
 {
     public:
-        cVarDeclNode(cSymbol * sym) : cDeclNode()
+        cVarDeclNode(cSymbol * sym, cSymbol * sym2) : cDeclNode()
         {
             AddChild(sym);
+
+            string temp = sym2->GetName();
+            if (g_symbolTable.FindLocal(temp) == nullptr) 
+            {
+                sym2 = new cSymbol(temp);
+                g_symbolTable.Insert(sym2);
+            }
+            AddChild(sym2);
         }
 
         void Insert(cSymbol *decl)

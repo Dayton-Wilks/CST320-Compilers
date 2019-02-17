@@ -10,7 +10,7 @@
 
 #include "cAstNode.h"
 #include "cExprNode.h"
-#include "cSymbol.h"
+//#include "cSymbol.h"
 
 class cVarExprNode : public cExprNode
 {
