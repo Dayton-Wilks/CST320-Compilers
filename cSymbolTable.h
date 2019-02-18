@@ -15,6 +15,7 @@
 #include <string>
 #include <list>
 #include "cSymbol.h"
+#include "cBaseTypeNode.h"
 
 // For brevity
 typedef std::unordered_map<std::string, cSymbol *> symbolTable_t;
@@ -27,9 +28,19 @@ class cSymbolTable
         {
             //_symbolTableList.insert(new symbolTable_t);
             IncreaseScope();
-            this->Insert(new cSymbol("char"));
+            cSymbol * t;
+
+            t = new cSymbol("char");
+            t->setDecl(new cBaseTypeNode(t->GetName(), 1, false));
+            this->Insert(t);
+
+            t = new cSymbol("int");
+            t->setDecl(new cBaseTypeNode(t->GetName(), 4, false));
             this->Insert(new cSymbol("int"));
-            this->Insert(new cSymbol("float"));
+
+            t = new cSymbol("float");
+            t->setDecl(new cBaseTypeNode(t->GetName(), 8, true));
+            this->Insert(t);
         };
 
         // Increase the scope: add a level to the nested symbol table

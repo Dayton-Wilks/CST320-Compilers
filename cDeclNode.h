@@ -9,10 +9,22 @@
 // phil.howard@oit.edu
 //
 
+#include <string>
+using std::string;
 #include "cAstNode.h"
 
 class cDeclNode : public cAstNode
 {
     public:
         cDeclNode() : cAstNode() {}
+
+        virtual bool IsVar()        { return false; }
+        virtual bool IsInt()        { return false; }
+        virtual bool IsChar()       { return false; }
+        virtual bool IsFloat()      { return false; }
+        virtual int GetSize()       { return 0;     }
+        virtual bool IsFunc()       { return false; }
+        virtual bool IsStruct()     { return false; }
+        virtual bool IsType()       { return false; }
+        virtual string GetName()    { return "";    }
 };

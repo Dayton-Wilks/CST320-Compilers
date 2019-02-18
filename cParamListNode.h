@@ -9,15 +9,15 @@
 
 #include "cAstNode.h"
 
-class cParamListNode : public cExprNode
+class cParamListNode : public cAstNode
 {
     public:
-        cParamListNode(cExprNode * expr) : cExprNode()
+        cParamListNode(cAstNode * expr) : cAstNode()
         {
             AddChild(expr);
         }
 
-        void Insert(cExprNode * expr)
+        void Insert(cAstNode * expr)
         {
             AddChild(expr);
         }

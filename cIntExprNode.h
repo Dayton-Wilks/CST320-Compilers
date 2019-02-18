@@ -13,6 +13,7 @@
 
 #include "cAstNode.h"
 #include "cExprNode.h"
+#include "cSymbolTable.h"
 
 class cIntExprNode : public cExprNode
 {
@@ -21,6 +22,11 @@ class cIntExprNode : public cExprNode
         cIntExprNode(int value) : cExprNode()
         {
             m_value = value;
+        }
+
+        virtual cDeclNode * GetType()
+        {
+            return g_symbolTable.Find("int")->getDecl();
         }
 
         virtual string AttributesToString() 

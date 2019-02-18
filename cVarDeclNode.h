@@ -20,8 +20,10 @@ class cVarDeclNode : public cDeclNode
     public:
         cVarDeclNode(cSymbol * sym, cSymbol * sym2) : cDeclNode()
         {
+            // Type
             AddChild(sym);
 
+            // Name
             string temp = sym2->GetName();
             if (g_symbolTable.FindLocal(temp) == nullptr) 
             {

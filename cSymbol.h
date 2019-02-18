@@ -14,7 +14,6 @@
 using std::string;
 #include "cAstNode.h"
 
-
 #define VAR_TYPE 0
 #define STRUCT_TYPE 1
 #define ARRAY_TYPE 2
@@ -27,6 +26,7 @@ class cSymbol : public cAstNode
         {
             m_id = ++nextId;        // get next available ID
             m_name = name;
+            m_declNode = nullptr;
         }
 
         // return name of symbol
@@ -41,6 +41,17 @@ class cSymbol : public cAstNode
             result += "\" name=\"" + m_name + "\"";
             return result;
         }
+
+        void setDecl(cDeclNode * node)
+        {
+            m_declNode = node;
+        }
+
+        cDeclNode * getDecl()
+        {
+            return m_declNode;
+        }
+
         virtual string NodeType() { return string("sym"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:
@@ -48,4 +59,5 @@ class cSymbol : public cAstNode
         long long m_id;                 // Unique ID for this symbol
         string m_name;                  // name of symbol
         int m_type;
+        cDeclNode * m_declNode;
 };

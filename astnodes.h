@@ -10,6 +10,7 @@
 //
 
 #include "cAstNode.h"
+#include "cBaseTypeNode.h"
 #include "cSymbol.h"
 #include "cStmtNode.h"
 #include "cStmtsNode.h"

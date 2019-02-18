@@ -12,6 +12,7 @@
 
 #include "cAstNode.h"
 #include "cExprNode.h"
+#include "cSymbolTable.h"
 
 class cFuncExprNode : public cExprNode
 {
@@ -21,6 +22,12 @@ class cFuncExprNode : public cExprNode
         {
             AddChild(name);
             AddChild(params);
+        }
+
+        virtual cDeclNode * GetType()
+        {
+            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(0));
+            return sym->getDecl();
         }
 
         virtual string NodeType() { return string("funcCall"); }

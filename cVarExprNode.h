@@ -25,6 +25,12 @@ class cVarExprNode : public cExprNode
             AddChild(node);
         }
 
+        virtual cDeclNode * GetType()
+        {
+            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(0));
+            return sym->getDecl();
+        }
+
         virtual string NodeType() { return string("varref"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };
