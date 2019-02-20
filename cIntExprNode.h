@@ -35,6 +35,12 @@ class cIntExprNode : public cExprNode
         }
         virtual string NodeType() { return string("int"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        int GetValue() { return m_value; }
+        virtual bool IsChar() 
+        { 
+            return (m_value <= 127);
+        }
     protected:
         int m_value;        // value of integer constant (literal)
 };

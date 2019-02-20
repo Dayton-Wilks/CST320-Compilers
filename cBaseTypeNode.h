@@ -20,10 +20,10 @@ class cBaseTypeNode : public cDeclNode
         }
 
         virtual bool IsFloat() { return m_isFloat; }
-        virtual bool IsInt() { return !m_isFloat; }
-        virtual bool IsChar() { return (!m_isFloat && m_size == 1); }
+        virtual bool IsInt() { return !m_isFloat && m_size != 1; }
+        virtual bool IsChar() { return m_size == 1; }
         virtual int GetSize() { return m_size; }
-        virtual cDeclNode * GetType() {return this; }
+        virtual cDeclNode * GetType() { return this; }
         virtual string GetName() {return m_name; }
         virtual bool IsType() { return true; }
 

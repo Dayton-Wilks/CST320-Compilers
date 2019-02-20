@@ -26,11 +26,11 @@ class cExprNode : public cStmtNode
         }
 
         // pure virtual
-        virtual cDeclNode * GetType() 
-        {
-            
-        }
+        virtual cDeclNode * GetType() = 0;
 
+        virtual bool IsVar() { return false; }
+        virtual bool IsChar() { return false; }
+        
         virtual string NodeType() { return string("expr"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

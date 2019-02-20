@@ -20,7 +20,21 @@ class cStructDeclNode : public cDeclNode
         {
             AddChild(members);
             AddChild(name);
+            g_symbolTable.Insert(name);
         }
+
+        virtual cDeclNode * GetType() 
+        {
+            return this;
+        }
+
+        virtual string GetName()
+        {
+            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(1));
+            return sym->GetName();
+        }
+
+        virtual bool IsStruct() { return true; }
         
         virtual string NodeType() { return string("struct_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

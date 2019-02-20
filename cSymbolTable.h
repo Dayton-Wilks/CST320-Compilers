@@ -34,13 +34,31 @@ class cSymbolTable
             t->setDecl(new cBaseTypeNode(t->GetName(), 1, false));
             this->Insert(t);
 
+            // fprintf(stderr, "char - F%s - I%s - C%s\n", 
+            //     ((t->getDecl()->IsFloat()) ? "true" : "false"),
+            //     ((t->getDecl()->IsInt()) ? "true" : "false"),
+            //     ((t->getDecl()->IsChar()) ? "true" : "false")
+            // );
+
             t = new cSymbol("int");
             t->setDecl(new cBaseTypeNode(t->GetName(), 4, false));
-            this->Insert(new cSymbol("int"));
+            this->Insert(t);
+
+            //             fprintf(stderr, "int - F%s - I%s - C%s\n", 
+            //     ((t->getDecl()->IsFloat()) ? "true" : "false"),
+            //     ((t->getDecl()->IsInt()) ? "true" : "false"),
+            //     ((t->getDecl()->IsChar()) ? "true" : "false")
+            // );
 
             t = new cSymbol("float");
             t->setDecl(new cBaseTypeNode(t->GetName(), 8, true));
             this->Insert(t);
+
+            //             fprintf(stderr, "float - F%s - I%s - C%s\n", 
+            //     ((t->getDecl()->IsFloat()) ? "true" : "false"),
+            //     ((t->getDecl()->IsInt()) ? "true" : "false"),
+            //     ((t->getDecl()->IsChar()) ? "true" : "false")
+            // );
         };
 
         // Increase the scope: add a level to the nested symbol table

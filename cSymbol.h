@@ -9,23 +9,29 @@
 // phil.howard@oit.edu
 //
 
+#include <iostream>
+using std::cerr;
+using std::endl;
 #include <string>
 
 using std::string;
 #include "cAstNode.h"
+//#include "tokens.h"
 
-#define VAR_TYPE 0
-#define STRUCT_TYPE 1
-#define ARRAY_TYPE 2
+// #define VAR_TYPE 0
+// #define STRUCT_TYPE 1
+// #define ARRAY_TYPE 2
 
 class cSymbol : public cAstNode
 {
     public:
         // param is name of symbol
-        cSymbol(string name, int type = VAR_TYPE) : cAstNode()
+        cSymbol(string name, int type = 258) : cAstNode()
         {
             m_id = ++nextId;        // get next available ID
+            //cerr << name << "-" << m_id << endl;
             m_name = name;
+            m_type = type;
             m_declNode = nullptr;
         }
 

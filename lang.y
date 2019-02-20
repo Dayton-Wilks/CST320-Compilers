@@ -14,6 +14,7 @@ using std::string;
 #include "lex.h"
 #include "astnodes.h"
 #include "cSymbolTable.h"
+#include "cSemantic.h"
 
 %}
 
@@ -35,23 +36,14 @@ using std::string;
     cDeclNode*      decl_node;
     cDeclsNode*     decls_node;
     cFuncDeclNode*  func_decl;
+    cParamsNode*    param_node;
     cParamListNode* param_list;
     }
 
 %{
-
     bool g_semanticErrorHappened = false;
 
-    #define CHECK_ERROR() { if (g_semanticErrorHappened) \
-    { g_semanticErrorHappened = false; } }
-
-    #define PROP_ERROR() { if (g_semanticErrorHappened) \
-    { g_semanticErrorHappened = false; YYERROR; } }
-
     int yyerror(const char *msg);
-
-    // Function that gets called when a semantic error happens
-    void SemanticError(std::string error);
 
     cAstNode *yyast_root;
 %}
@@ -88,8 +80,8 @@ using std::string;
 %type <func_decl> func_header
 %type <func_decl> func_prefix
 %type <expr_node> func_call
-%type <decls_node> paramsspec
-%type <decl_node> paramspec
+%type <param_node> paramsspec
+%type <param_node> paramspec
 %type <stmts_node> stmts
 %type <stmt_node> stmt
 %type <varexpr_node> lval
@@ -152,7 +144,8 @@ func_header: func_prefix paramsspec ')'
         |    func_prefix ')'    {  }
 func_prefix: TYPE_ID IDENTIFIER '('
                                 { 
-                                    $$ = new cFuncDeclNode($1, $2); 
+                                    $$ = new cFuncDeclNode($1, $2);
+                                    //$2->SetType(TYPE_ID); 
                                     g_symbolTable.IncreaseScope(); 
                                 }
 paramsspec: paramsspec ',' paramspec 
@@ -188,7 +181,7 @@ varref:   varref '.' varpart    { $$ = $1; $$->Insert($3); }
         | varref '[' expr ']'   { $$ = $1; $$->Insert($3); }
         | varpart               { $$ = new cVarExprNode($1); }
 
-varpart:  IDENTIFIER            { $$ = $1; }
+varpart:  IDENTIFIER            { $$ = $1;}
 
 lval:     varref                { $$ = $1; }
 
@@ -200,13 +193,13 @@ param:      expr                {  }
 expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3); }
         |   addit               {   }
 
-addit:      addit '+' term      { $$ = new cExprNode($1, new cOpNode('+'), $3); }
-        |   addit '-' term      { $$ = new cExprNode($1, new cOpNode('-'), $3); }
+addit:      addit '+' term      { $$ = new cBinaryExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { $$ = new cBinaryExprNode($1, new cOpNode('-'), $3); }
         |   term                {  }
 
-term:       term '*' fact       { $$ = new cExprNode($1, new cOpNode('*'), $3); }
-        |   term '/' fact       { $$ = new cExprNode($1, new cOpNode('/'), $3); }
-        |   term '%' fact       { $$ = new cExprNode($1, new cOpNode('%'), $3); }
+term:       term '*' fact       { $$ = new cBinaryExprNode($1, new cOpNode('*'), $3); }
+        |   term '/' fact       { $$ = new cBinaryExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { $$ = new cBinaryExprNode($1, new cOpNode('%'), $3); }
         |   fact                {  }
 
 fact:        '(' expr ')'       { $$ = $2; }
@@ -222,15 +215,15 @@ int yyerror(const char *msg)
     std::cerr << "ERROR: " << msg << " at symbol "
         << yytext << " on line " << yylineno << "\n";
 
-    return 0;
+    return 0;//std::cout<< "1 "<<$1->GetName()<<std::endl;
 }
 
-// Function that gets called when a semantic error happens
 void SemanticError(std::string error)
 {
-    std::cout << "ERROR: " << error << " on line " 
-              << yylineno << "\n";
+    std::cout << "ERROR: " << error << "on line " 
+            << yylineno << "\n";
     g_semanticErrorHappened = true;
     yynerrs++;
 }
+
 

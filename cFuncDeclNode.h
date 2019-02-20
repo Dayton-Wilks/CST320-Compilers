@@ -19,6 +19,8 @@ class cFuncDeclNode : public cDeclNode
         {
             AddChild(type);
             AddChild(name);
+            name->setDecl(this);
+            g_symbolTable.Insert(name);
         }
 
         // Add a decl to the list
@@ -26,6 +28,19 @@ class cFuncDeclNode : public cDeclNode
         {
             AddChild(node);
         }
+
+        virtual cDeclNode * GetType()
+        {
+            cSymbol * t = dynamic_cast<cSymbol*>(GetChild(0));
+            return t->getDecl();
+        }
+        virtual string GetName()
+        {
+            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(1));
+            return sym->GetName();
+        }
+
+        virtual bool IsFunc() { return true; }
 
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

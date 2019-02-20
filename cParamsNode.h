@@ -11,12 +11,15 @@
 // #include "cDeclsNode.h"
 // #include "cSymbol.h"
 
-class cParamsNode : public cDeclsNode
+class cParamsNode : public cAstNode
 {
     public:
-        cParamsNode(cDeclNode * decl) : cDeclsNode(decl) { }
+        cParamsNode(cAstNode * decl) : cAstNode() 
+        {
+            AddChild(decl);
+        }
 
-        void Insert(cDeclNode * decl)
+        void Insert(cAstNode * decl)
         {
             AddChild(decl);
         }

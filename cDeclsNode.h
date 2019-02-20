@@ -28,4 +28,5 @@ class cDeclsNode : public cDeclNode
 
         virtual string NodeType() { return string("decls"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        virtual string GetName() { return "delcsNode"; }
 };

@@ -84,11 +84,15 @@ period          "."
 
                                 if (yylval.symbol == nullptr)
                                 {
-                                    yylval.symbol = new cSymbol(yytext);
-                                    g_symbolTable.Insert(yylval.symbol);
+                                    yylval.symbol = new cSymbol(yytext, IDENTIFIER);
+                                    //yylval.symbol->SetType(IDENTIFIER);
+                                    //g_symbolTable.Insert(yylval.symbol);
+                                    //fprintf(stderr, "MADE - %s\n", yytext);
                                 }
+                                //else
+                                //fprintf(stderr, "FOUND - %s\n", yytext);
 
-                                if (yylval.symbol->GetType() != VAR_TYPE) 
+                                if (yylval.symbol->GetType() != IDENTIFIER) 
                                     DO_RETURN(TYPE_ID);
                                 DO_RETURN(IDENTIFIER);
                             }

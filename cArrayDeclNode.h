@@ -19,11 +19,18 @@ class cArrayDeclNode : public cDeclNode
             AddChild(type);
             m_size = size;
             AddChild(name);
+            g_symbolTable.Insert(name);
         }
 
         void Insert(cAstNode * node)
         {
             AddChild(node);
+        }
+
+        virtual string GetName() 
+        {
+            cSymbol * type = dynamic_cast<cSymbol*>(GetChild(2));
+            return type->GetName();
         }
 
         virtual string NodeType() { return string("array_decl"); }
