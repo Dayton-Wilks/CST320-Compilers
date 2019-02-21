@@ -20,13 +20,22 @@ class cFuncExprNode : public cExprNode
         // param is the value of the integer constant
         cFuncExprNode(cSymbol * name, cParamListNode * params) : cExprNode()
         {
+            if (!name->getDecl())
+            {
+                SemanticError(name->GetName() + " is not declared ");
+                CHECK_ERROR();
+            }
+            else if (!name->getDecl()->IsFunc())
+            {
+                SemanticError(name->GetName() + " is not a function ");
+                CHECK_ERROR();
+            }
             AddChild(name);
             AddChild(params);
         }
 
         virtual cDeclNode * GetType()
         {
-            
             cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(0));
             cFuncDeclNode* decl =  dynamic_cast<cFuncDeclNode*>(sym->getDecl());
             return decl->GetType();
