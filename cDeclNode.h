@@ -26,5 +26,6 @@ class cDeclNode : public cAstNode
         virtual bool IsFunc()       { return false; }
         virtual bool IsStruct()     { return false; }
         //virtual bool IsType()       { return false; }
+        virtual int ChildCount()    { return NumChildren(); }
         virtual string GetName()    = 0 ;
 };

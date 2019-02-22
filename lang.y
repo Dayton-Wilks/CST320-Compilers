@@ -128,20 +128,23 @@ array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
                                 }
 
 func_decl:  func_header ';'
-                                { g_symbolTable.DecreaseScope(); }
+                                { 
+                                    $$= $1; $$->Finalize(nullptr, nullptr);
+                                    g_symbolTable.DecreaseScope(); 
+                                }
         |   func_header  '{' decls stmts '}'
                                 { 
-                                    $$->Insert($3); $$->Insert($4); 
+                                    $$ = $1; $$->Finalize($3, $4);//$$->Insert($3); $$->Insert($4); 
                                     g_symbolTable.DecreaseScope(); 
                                 }
         |   func_header  '{' stmts '}'
                                 { 
-                                    $$ = $1; $$->Insert($3); 
+                                    $$ = $1; $$->Finalize(nullptr, $3); //$$->Insert(nullptr); $$->Insert($3); 
                                     g_symbolTable.DecreaseScope(); 
                                 }
 func_header: func_prefix paramsspec ')'
                                 { $$ = $1; $1->Insert($2); }
-        |    func_prefix ')'    {  }
+        |    func_prefix ')'    { $$ = $1; $1->Insert(nullptr); }
 func_prefix: TYPE_ID IDENTIFIER '('
                                 { 
                                     $$ = new cFuncDeclNode($1, $2);

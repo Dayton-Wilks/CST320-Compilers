@@ -20,16 +20,34 @@ class cFuncExprNode : public cExprNode
         // param is the value of the integer constant
         cFuncExprNode(cSymbol * name, cParamListNode * params) : cExprNode()
         {
-            if (!name->getDecl())
+            cDeclNode * decl = name->getDecl();
+            cFuncDeclNode* fdecl= dynamic_cast<cFuncDeclNode*>(decl);
+
+            if (!decl)
             {
                 SemanticError(name->GetName() + " is not declared ");
                 CHECK_ERROR();
             }
-            else if (!name->getDecl()->IsFunc())
+            else if (!decl->IsFunc())
             {
                 SemanticError(name->GetName() + " is not a function ");
                 CHECK_ERROR();
             }
+            else if (!fdecl->HasBody())
+            {
+                SemanticError(name->GetName() + " is not fully defined ");
+                CHECK_ERROR();
+            }
+            else if (
+                (fdecl->GetParams() == nullptr && params != nullptr) ||
+                (fdecl->GetParams() != nullptr && params == nullptr) ||
+                (fdecl->GetParams() != 0 && params == nullptr) ||
+                (params != nullptr && fdecl->GetParams() != nullptr && fdecl->GetParams()->ChildCount() != params->ChildCount()))
+            {
+                SemanticError(name->GetName() + " called with wrong number of arguments ");
+                CHECK_ERROR();
+            }
+
             AddChild(name);
             AddChild(params);
         }

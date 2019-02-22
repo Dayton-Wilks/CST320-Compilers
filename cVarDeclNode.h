@@ -73,9 +73,10 @@ class cVarDeclNode : public cDeclNode
             return toReturn->getDecl()->IsFloat();
         }
 
+        cSymbol* GetType() { return dynamic_cast<cSymbol*>(GetChild(0));}
         virtual string GetName() 
         {
-            cSymbol * type = dynamic_cast<cSymbol*>(GetChild(0));
+            cSymbol * type = dynamic_cast<cSymbol*>(GetChild(1));
             return type->GetName();
         }
 
