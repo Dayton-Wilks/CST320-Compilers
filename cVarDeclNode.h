@@ -21,8 +21,6 @@ class cVarDeclNode : public cDeclNode
     public:
         cVarDeclNode(cSymbol * sym, cSymbol * sym2) : cDeclNode()
         {
-
-            //fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), this);
             // Type
             AddChild(sym);
 
@@ -45,6 +43,7 @@ class cVarDeclNode : public cDeclNode
                CHECK_ERROR();
             }
             
+            fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i> this<%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), sym2,this);
         }
 
         void Insert(cSymbol *decl)
@@ -84,7 +83,7 @@ class cVarDeclNode : public cDeclNode
             //fprintf(stderr, "<%s> ", );
             // fprintf(stderr, "Struct <%d> <%d> ", dynamic_cast<cSymbol*>(GetChild(0))->GetName().c_str(), this);
             // fprintf(stderr, (type == toReturn) ? "true\n" : "false\n");
-
+            //if (toReturn->getDecl() == nullptr) return false;
             return toReturn->getDecl()->IsStruct();
         }
 

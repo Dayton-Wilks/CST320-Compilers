@@ -23,7 +23,7 @@ class cStructDeclNode : public cDeclNode
             name->setDecl(this);
             g_symbolTable.Insert(name);
             
-            //fprintf(stderr, "StrucDecl Name:<%s> this:<%i> NamPtr:<%i>\n", GetName().c_str(), this, name);
+            fprintf(stderr, "StrucDecl Name:<%s> this:<%i> NamPtr:<%i>\n", GetName().c_str(), this, name);
         }
 
         virtual cDeclNode * GetType() 

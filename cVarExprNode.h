@@ -31,21 +31,33 @@ class cVarExprNode : public cExprNode
             cSymbol* varSym = dynamic_cast<cSymbol*>(GetChild(NumChildren() - 1));
             cDeclNode* symDecl = varSym->getDecl();
 
+            // fprintf(stderr, "leftSym:<%s><%i>    leftDecl:<%s><%i>     rightSym:<%s><%i>\n", 
+            //     varSym->GetName().c_str(),  varSym,
+            //     symDecl->GetName().c_str(), symDecl,
+            //     dynamic_cast<cSymbol*>(node)->GetName().c_str(), node);
+
             if (symDecl)
             {
+                fprintf(stderr, "leftSym:<%s><%i>    leftDecl:<%s><%i>     rightSym:<%s><%i>\n", 
+                varSym->GetName().c_str(),  varSym,
+                symDecl->GetName().c_str(), symDecl,
+                dynamic_cast<cSymbol*>(node)->GetName().c_str(), node);
+
                 if(!symDecl->IsStruct())
                 {
                     SemanticError(symDecl->GetName() + " is not a struct ");
                     CHECK_ERROR();
                 }
-                else
+                else 
                 {
-                    string t = symDecl->GetName();
-                    cSymbol * toReturn = g_symbolTable.Find(t);
-                    string d = toReturn->GetName();
-                    cDeclNode* dec = toReturn->getDecl();
+                    cSymbol * test = dynamic_cast<cVarDeclNode*>(symDecl)->GetType();
+                    cDeclNode* test2 = test->getDecl(); // func decl made here
 
-                    //fprintf(stderr, "leftSym:<%i> rightSym:<%i>\n", varSym, node);
+                    fprintf(stderr, "Symbol <%s> <%d> - Decl <%i> <>\n", 
+                    test->GetName().c_str(), test,
+                    test2);
+
+                    // fprintf(stderr, "leftSym:<%s><%i> rightSym:<%i>\n", varSym->GetName().c_str(),  varSym, node);
 
                     // symbol -> cVarDeclNode -> 
 
