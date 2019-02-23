@@ -21,6 +21,8 @@ class cVarDeclNode : public cDeclNode
     public:
         cVarDeclNode(cSymbol * sym, cSymbol * sym2) : cDeclNode()
         {
+
+            //fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), this);
             // Type
             AddChild(sym);
 
@@ -61,6 +63,7 @@ class cVarDeclNode : public cDeclNode
 
         virtual bool IsChar()
         {
+            //if (IsStruct()) return false;
             cSymbol * type = dynamic_cast<cSymbol*>(GetChild(0));
             cSymbol * toReturn = g_symbolTable.Find(type->GetName());
             return toReturn->getDecl()->IsChar();
@@ -72,8 +75,21 @@ class cVarDeclNode : public cDeclNode
             cSymbol * toReturn = g_symbolTable.Find(type->GetName());
             return toReturn->getDecl()->IsFloat();
         }
-
         cSymbol* GetType() { return dynamic_cast<cSymbol*>(GetChild(0));}
+        virtual bool IsStruct()
+        {
+            cSymbol * type = dynamic_cast<cSymbol*>(GetChild(0));
+            cSymbol * toReturn = g_symbolTable.Find(type->GetName());
+
+            //fprintf(stderr, "<%s> ", );
+            // fprintf(stderr, "Struct <%d> <%d> ", dynamic_cast<cSymbol*>(GetChild(0))->GetName().c_str(), this);
+            // fprintf(stderr, (type == toReturn) ? "true\n" : "false\n");
+
+            return toReturn->getDecl()->IsStruct();
+        }
+
+        //virtual cDeclNode* GetType() { return dynamic_cast<cDeclNode*>(GetChild(0)); }
+
         virtual string GetName() 
         {
             cSymbol * type = dynamic_cast<cSymbol*>(GetChild(1));

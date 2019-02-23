@@ -28,6 +28,34 @@ class cVarExprNode : public cExprNode
 
         void Insert(cAstNode * node)
         {
+            cSymbol* varSym = dynamic_cast<cSymbol*>(GetChild(NumChildren() - 1));
+            cDeclNode* symDecl = varSym->getDecl();
+
+            if (symDecl)
+            {
+                if(!symDecl->IsStruct())
+                {
+                    SemanticError(symDecl->GetName() + " is not a struct ");
+                    CHECK_ERROR();
+                }
+                else
+                {
+                    string t = symDecl->GetName();
+                    cSymbol * toReturn = g_symbolTable.Find(t);
+                    string d = toReturn->GetName();
+                    cDeclNode* dec = toReturn->getDecl();
+
+                    //fprintf(stderr, "leftSym:<%i> rightSym:<%i>\n", varSym, node);
+
+                    // symbol -> cVarDeclNode -> 
+
+                    //cSymbol * first = dynamic_cast<cSymbol*>(dynamic_cast<cVarDeclNode*>(symDecl)->GetType());
+
+                    //fprintf(stderr, "first <%s>\n", first->GetName().c_str());
+
+                }
+            }
+
             AddChild(node);
         }
 
