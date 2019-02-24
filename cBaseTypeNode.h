@@ -2,6 +2,7 @@
 //*****************************
 // cBaseTypeNode.h
 // Dayton Wilks
+// Class for representing base types
 //
 
 #include <string>

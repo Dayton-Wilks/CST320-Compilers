@@ -29,7 +29,6 @@ class cSymbol : public cAstNode
         cSymbol(string name, int type = 258) : cAstNode()
         {
             m_id = ++nextId;        // get next available ID
-            //cerr << name << "-" << m_id << endl;
             m_name = name;
             m_type = type;
             m_declNode = nullptr;

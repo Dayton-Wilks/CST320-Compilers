@@ -26,17 +26,14 @@ class cFuncExprNode : public cExprNode
             if (!decl)
             {
                 SemanticError(name->GetName() + " is not declared ");
-                //CHECK_ERROR();
             }
             else if (!decl->IsFunc())
             {
                 SemanticError(name->GetName() + " is not a function ");
-                //CHECK_ERROR();
             }
             else if (!fdecl->HasBody())
             {
                 SemanticError(name->GetName() + " is not fully defined ");
-                //CHECK_ERROR();
             }
             else if (
                 (fdecl->GetParams() == nullptr && params != nullptr) ||
@@ -45,7 +42,6 @@ class cFuncExprNode : public cExprNode
                 (params != nullptr && fdecl->GetParams() != nullptr && fdecl->GetParams()->ChildCount() != params->ChildCount()))
             {
                 SemanticError(name->GetName() + " called with wrong number of arguments ");
-                //CHECK_ERROR();
             }
 
             AddChild(name);
@@ -58,6 +54,7 @@ class cFuncExprNode : public cExprNode
             cFuncDeclNode* decl =  dynamic_cast<cFuncDeclNode*>(sym->getDecl());
             return decl->GetType();
         }
+        
         virtual bool IsVar() { return true; }
         virtual bool IsChar() { return GetType()->IsChar(); }
         virtual string NodeType() { return string("funcCall"); }

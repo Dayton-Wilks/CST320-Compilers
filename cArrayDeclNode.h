@@ -39,6 +39,7 @@ class cArrayDeclNode : public cDeclNode
         {
             return " count=\"" + std::to_string(m_size) + "\"";
         }
+        
     protected:
         int m_size;
 };

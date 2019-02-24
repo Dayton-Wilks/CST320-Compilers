@@ -10,7 +10,6 @@
 
 #include "cAstNode.h"
 #include "cExprNode.h"
-//#include "cSymbol.h"
 
 class cVarExprNode : public cExprNode
 {
@@ -57,7 +56,6 @@ class cVarExprNode : public cExprNode
                 else
                 {
                     cSymbol* t = test2->GetChildSym(dynamic_cast<cSymbol*>(node));
-                    //if (t->getDecl()->IsStruct())
                     AddChild(t);
                     return;
                 }
@@ -75,8 +73,6 @@ class cVarExprNode : public cExprNode
                 : nullptr;
             return node;
         }
-
-
 
         virtual bool IsVar() { return true; }
         virtual string NodeType() { return string("varref"); }

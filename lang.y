@@ -140,12 +140,12 @@ func_decl:  func_header ';'
                                 }
         |   func_header  '{' decls stmts '}'
                                 { 
-                                    $$ = $1; $$->Finalize($3, $4);//$$->Insert($3); $$->Insert($4); 
+                                    $$ = $1; $$->Finalize($3, $4);
                                     g_symbolTable.DecreaseScope(); 
                                 }
         |   func_header  '{' stmts '}'
                                 { 
-                                    $$ = $1; $$->Finalize(nullptr, $3); //$$->Insert(nullptr); $$->Insert($3); 
+                                    $$ = $1; $$->Finalize(nullptr, $3);
                                     g_symbolTable.DecreaseScope(); 
                                 }
 func_header: func_prefix paramsspec ')'
@@ -154,7 +154,6 @@ func_header: func_prefix paramsspec ')'
 func_prefix: TYPE_ID IDENTIFIER '('
                                 { 
                                     $$ = new cFuncDeclNode($1, $2);
-                                    //$2->SetType(TYPE_ID); 
                                     g_symbolTable.IncreaseScope(); 
                                 }
 paramsspec: paramsspec ',' paramspec 
@@ -199,7 +198,10 @@ params:     params ',' param    { $$ = $1; $$->Insert($3); }
 
 param:      expr                {  }
 
-expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3); CHECK_ERROR(); }
+expr:       expr EQUALS addit   { 
+                                    $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3);
+                                    CHECK_ERROR(); 
+                                }
         |   addit               {   }
 
 addit:      addit '+' term      { $$ = new cBinaryExprNode($1, new cOpNode('+'), $3); }

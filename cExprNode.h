@@ -7,7 +7,7 @@
 // This is a pure virtual class because there is no definition for
 // cAstNode::ToString()
 //
-// Author: Phil Howard 
+// Author: Phil Howard & Dayton Wilks
 // phil.howard@oit.edu
 //
 

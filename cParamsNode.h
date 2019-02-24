@@ -8,8 +8,6 @@
 //
 
 #include "cAstNode.h"
-// #include "cDeclsNode.h"
-// #include "cSymbol.h"
 
 class cParamsNode : public cAstNode
 {
@@ -24,7 +22,7 @@ class cParamsNode : public cAstNode
             AddChild(decl);
         }
 
-        int ChildCount()    { return NumChildren(); }
+        int ChildCount() { return NumChildren(); }
         cVarDeclNode * GetParam(int index) 
         {
             return dynamic_cast<cVarDeclNode*>(GetChild(index));

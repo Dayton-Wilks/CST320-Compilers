@@ -22,7 +22,6 @@ class cDeclsNode : public cDeclNode
         // Add a decl to the list
         void Insert(cDeclNode *decl)
         {
-            //fprintf(stderr, "DeclInsert<%i>\n", decl);
             AddChild(decl);
         }
 

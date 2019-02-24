@@ -35,8 +35,6 @@ class cFloatExprNode : public cExprNode
         virtual string NodeType() { return string("float"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 
-        //float GetValue() { return m_value; }
-
     protected:
         float m_value;        // value of integer constant (literal)
 };

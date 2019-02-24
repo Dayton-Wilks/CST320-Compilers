@@ -9,7 +9,6 @@
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
-//#include "cSymbol.h"
 
 class cFuncDeclNode : public cDeclNode
 {
@@ -20,27 +19,6 @@ class cFuncDeclNode : public cDeclNode
             AddChild(type);
             AddChild(name);
 
-            // cDeclNode* newDecl = type->getDecl();
-            // cFuncDeclNode* oldDecl = dynamic_cast<cFuncDeclNode*>(name->getDecl());
-
-            // if (oldDecl && newDecl->GetName() != oldDecl->GetType()->GetName())
-            // {
-            //     // Return Type
-            //     if (newDecl->GetName() != oldDecl->GetType()->GetName())
-            //     {
-            //         SemanticError(name->GetName() + " previously defined with different return type ");
-            //         CHECK_ERROR();
-            //     }
-                
-            //     // Number of Params
-            //     if (newDecl->ChildCount() != oldDecl->ChildCount())
-            //     {
-            //         SemanticError(name->GetName() + " redeclared with different number of parameters ");
-            //         CHECK_ERROR();
-            //     }
-            // }
-
-            //name->setDecl(this);
             g_symbolTable.Insert(name);
         }
 
@@ -49,12 +27,6 @@ class cFuncDeclNode : public cDeclNode
         {
             AddChild(node);
         }
-
-        // void SetParams(cParamsNode* params) 
-        // {
-
-        //     AddChild(params);
-        // }
 
         virtual cDeclNode * GetType()
         {
@@ -72,8 +44,6 @@ class cFuncDeclNode : public cDeclNode
 
         cParamsNode* GetParams() { return dynamic_cast<cParamsNode*>(GetChild(2)); }
         bool HasBody() { return GetChild(3) || GetChild(4); }
-
-        // void SetBody(cDeclsNode * decls, CStmtNode* stmts) { AddChild(decls); AddChild(stmts); FinalizeDecl();}
 
         void Finalize(cDeclsNode * decls, cStmtsNode* stmts) 
         {
@@ -95,7 +65,6 @@ class cFuncDeclNode : public cDeclNode
                 }
                 
                 // Number of Params
-                //printf("Name <%s> - New <%d> - Old <%d>\n", GetName().c_str(), GetParams()->ChildCount(), oldDecl->GetParams()->ChildCount());
                 cParamsNode* newParams = GetParams();
                 cParamsNode* oldParams = oldDecl->GetParams();
                 if (newParams && oldParams)
@@ -103,7 +72,6 @@ class cFuncDeclNode : public cDeclNode
                     if (newParams->ChildCount() != oldParams->ChildCount())
                     {
                         SemanticError(nameSym->GetName() + " redeclared with a different number of parameters ");
-                        //CHECK_ERROR();
                     }
                     else if (newParams->ChildCount())
                     {
@@ -113,7 +81,6 @@ class cFuncDeclNode : public cDeclNode
                             {
                                 ii = newParams->ChildCount();
                                 SemanticError(nameSym->GetName() + " previously defined with different parameters ");
-                                //CHECK_ERROR();
                             }
                         }
                     }
@@ -123,14 +90,11 @@ class cFuncDeclNode : public cDeclNode
                 if (HasBody() && oldDecl->HasBody())
                 {
                     SemanticError(nameSym->GetName() + " already has a definition ");
-                    //CHECK_ERROR();
                 }
             }
 
             nameSym->setDecl(this); 
         }
-
-        //int ChildCount() { return NumChildren(); }
 
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

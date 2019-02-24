@@ -20,6 +20,7 @@ public:
     
     virtual string NodeType() { return string("assign"); }
     virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+    
 private:
     bool IsAssignable(cVarExprNode * left, cExprNode * right)
     {
@@ -40,7 +41,8 @@ private:
             {
                 if (!right->IsVar())
                 {
-                    cIntExprNode * num = (static_cast<cIntExprNode*>(right));
+                    cIntExprNode * num = 
+                        (static_cast<cIntExprNode*>(right));
                     if (num->IsChar())
                     {
                         return true;
@@ -56,8 +58,12 @@ private:
             }
             else if (leftType->IsStruct() || rightType->IsStruct())
             {
-                string rightTypeName = dynamic_cast<cVarDeclNode*>(rightType)->GetType()->getDecl()->GetName();
-                    string leftTypeName = dynamic_cast<cVarDeclNode*>(leftType)->GetType()->getDecl()->GetName();
+                string rightTypeName = 
+                    dynamic_cast<cVarDeclNode*>(rightType)
+                    ->GetType()->getDecl()->GetName();
+                string leftTypeName = 
+                    dynamic_cast<cVarDeclNode*>(leftType)
+                    ->GetType()->getDecl()->GetName();
 
                 if (rightTypeName != leftTypeName)
                 {
