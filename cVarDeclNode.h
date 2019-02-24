@@ -40,10 +40,7 @@ class cVarDeclNode : public cDeclNode
             else
             {
                SemanticError(string("Symbol ") + temp + " already defined in current scope ");
-               //CHECK_ERROR();
             }
-            
-            //fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i> this<%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), sym2,this);
         }
 
         void Insert(cSymbol *decl)
@@ -62,7 +59,6 @@ class cVarDeclNode : public cDeclNode
 
         virtual bool IsChar()
         {
-            //if (IsStruct()) return false;
             cSymbol * type = dynamic_cast<cSymbol*>(GetChild(0));
             cSymbol * toReturn = g_symbolTable.Find(type->GetName());
             return toReturn->getDecl()->IsChar();
@@ -82,8 +78,6 @@ class cVarDeclNode : public cDeclNode
 
             return toReturn->getDecl()->IsStruct();
         }
-
-        //virtual cDeclNode* GetType() { return dynamic_cast<cDeclNode*>(GetChild(0)); }
 
         virtual string GetName() 
         {

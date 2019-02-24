@@ -30,16 +30,11 @@ private:
 
         if(leftType != nullptr && rightType != nullptr)
         {
-            //SemanticError(string("Lchar?") + ((leftType->IsChar()) ? "true " : "false "));
-            //SemanticError(string("Rint?") + ((rightType->IsInt()) ? "true " : "false "));
-            //SemanticError(string("Rvar?") + ((right->IsVar()) ? "true " : "false "));
-
             string err;
             if(leftType->IsChar() && rightType->IsFloat())
             {
                 err = "Cannot assign float to char ";
                 SemanticError(err);
-                //CHECK_ERROR();
             }
             else if(leftType->IsChar() && rightType->IsInt())
             {
@@ -53,14 +48,24 @@ private:
                 }
                 err = "Cannot assign int to char ";
                 SemanticError(err);
-                //CHECK_ERROR();
             }
             else if(leftType->IsInt() && rightType->IsFloat())
             {
-                //std::cerr << "left:"<<leftType->GetName() <<"-right:"<<rightType->GetName()<< std::endl;
                 err = "Cannot assign float to int ";
                 SemanticError(err);
-                //CHECK_ERROR();
+            }
+            else if (leftType->IsStruct() || rightType->IsStruct())
+            {
+                string rightTypeName = dynamic_cast<cVarDeclNode*>(rightType)->GetType()->getDecl()->GetName();
+                    string leftTypeName = dynamic_cast<cVarDeclNode*>(leftType)->GetType()->getDecl()->GetName();
+
+                if (rightTypeName != leftTypeName)
+                {
+                    err = "Cannot assign ";
+                    err += rightTypeName + " to ";
+                    err += leftTypeName + " ";
+                    SemanticError(err);
+                }
             }
             else
             {

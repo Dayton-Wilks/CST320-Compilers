@@ -188,11 +188,11 @@ func_call:  IDENTIFIER '(' params ')'
 
 varref:   varref '.' varpart    { $$ = $1; $$->Insert($3); PROP_ERROR(); }
         | varref '[' expr ']'   { $$ = $1; $$->Insert($3); }
-        | varpart               { $$ = new cVarExprNode($1); }
+        | varpart               { $$ = new cVarExprNode($1);  CHECK_ERROR(); }
 
 varpart:  IDENTIFIER            { $$ = $1;}
 
-lval:     varref                { $$ = $1; }
+lval:     varref                { $$ = $1; CHECK_ERROR();}
 
 params:     params ',' param    { $$ = $1; $$->Insert($3); }
         |   param               { $$ = new cParamListNode($1); }
