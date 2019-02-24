@@ -20,7 +20,7 @@ class cVarExprNode : public cExprNode
             if (g_symbolTable.Find(sym->GetName()) == nullptr)
             {
                 SemanticError(string("Symbol ") + sym->GetName() + " not defined ");
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else
                 AddChild(sym);
@@ -29,58 +29,80 @@ class cVarExprNode : public cExprNode
         void Insert(cAstNode * node)
         {
             cSymbol* varSym = dynamic_cast<cSymbol*>(GetChild(NumChildren() - 1));
+            cSymbol* symNode = dynamic_cast<cSymbol*>(node);
+
+            // if (symNode->GetName() == "a")
+            //     SemanticError(string(" check "));
+
             cDeclNode* symDecl = varSym->getDecl();
 
-            // fprintf(stderr, "leftSym:<%s><%i>    leftDecl:<%s><%i>     rightSym:<%s><%i>\n", 
-            //     varSym->GetName().c_str(),  varSym,
-            //     symDecl->GetName().c_str(), symDecl,
-            //     dynamic_cast<cSymbol*>(node)->GetName().c_str(), node);
+            //SemanticError(varSym->GetName() + " test ");
 
-            if (symDecl)
+            //if (symDecl)
             {
-                fprintf(stderr, "leftSym:<%s><%i>    leftDecl:<%s><%i>     rightSym:<%s><%i>\n", 
-                varSym->GetName().c_str(),  varSym,
-                symDecl->GetName().c_str(), symDecl,
-                dynamic_cast<cSymbol*>(node)->GetName().c_str(), node);
-
-                if(!symDecl->IsStruct())
+                if(!symDecl || !symDecl->IsStruct())
                 {
-                    SemanticError(symDecl->GetName() + " is not a struct ");
-                    CHECK_ERROR();
+                    string err;
+                    int count = NumChildren();
+                    for (int ii = 0; ii < count; ++ii)
+                    {
+                        err += dynamic_cast<cSymbol*>(GetChild(ii))->GetName();
+                        if (ii != count - 1) err += ".";
+                    }
+                    //err += varSym->GetName();
+
+                    SemanticError(err + " is not a struct ");
+                    //CHECK_ERROR();
                 }
                 else 
                 {
                     cSymbol * test = dynamic_cast<cVarDeclNode*>(symDecl)->GetType();
-                    cDeclNode* test2 = test->getDecl(); // func decl made here
+                    cDeclNode* test2 = test->getDecl(); // struct decl made here
 
-                    fprintf(stderr, "Symbol <%s> <%d> - Decl <%i> <>\n", 
-                    test->GetName().c_str(), test,
-                    test2);
-
-                    // fprintf(stderr, "leftSym:<%s><%i> rightSym:<%i>\n", varSym->GetName().c_str(),  varSym, node);
-
-                    // symbol -> cVarDeclNode -> 
-
-                    //cSymbol * first = dynamic_cast<cSymbol*>(dynamic_cast<cVarDeclNode*>(symDecl)->GetType());
-
-                    //fprintf(stderr, "first <%s>\n", first->GetName().c_str());
-
+                    if (!test2->HasChild(dynamic_cast<cSymbol*>(node)))
+                    {
+                        SemanticError(symNode->GetName() + " is not a field of " + varSym->GetName() + " ");
+                        //CHECK_ERROR();
+                    }
+                    else
+                    {
+                        //SemanticError(string("Insert <" + std::to_string((long)test2->GetChildSym(dynamic_cast<cSymbol*>(node))) + ">"));
+                        //fprintf(stderr, "Insert <%i>\n", test2->GetChildSym(dynamic_cast<cSymbol*>(node)));
+                        cSymbol* t = test2->GetChildSym(dynamic_cast<cSymbol*>(node));
+                        //if (t->getDecl()->IsStruct())
+                        {
+                            //SemanticError(string(" Alt Insert <") + t->GetName() + "> ");
+                            AddChild(t);
+                            return;
+                        }
+                    }
                 }
             }
-
-            AddChild(node);
+            //else
+            {
+                AddChild(node);
+            }
         }
 
         virtual cDeclNode * GetType()
         {
-            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(0));
-            if (sym == nullptr) 
-            {
-                //fprintf(stderr, "MISSING TYPE");
-                return nullptr;
-            }
-            return sym->getDecl();
+            int count = NumChildren();
+
+            cDeclNode* node = (count) ? 
+                dynamic_cast<cSymbol*>(GetChild(count - 1))->getDecl() 
+                : nullptr;
+            return node;
+
+            // cSymbol * sym;
+            // if (count == 0) 
+            // {
+            //     return nullptr;
+            // }
+            // sym = dynamic_cast<cSymbol*>(GetChild(count - 1));
+            // return sym->getDecl();
         }
+
+
 
         virtual bool IsVar() { return true; }
         virtual string NodeType() { return string("varref"); }

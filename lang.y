@@ -43,6 +43,12 @@ using std::string;
 %{
     bool g_semanticErrorHappened = false;
 
+    #define CHECK_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; } }
+
+    #define PROP_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; YYERROR; } }
+
     int yyerror(const char *msg);
 
     cAstNode *yyast_root;
@@ -110,8 +116,8 @@ open:   '{'                     { g_symbolTable.IncreaseScope(); }
 
 close:  '}'                     { g_symbolTable.DecreaseScope(); }
 
-decls:      decls decl          { $$ = $1; $$->Insert($2); }
-        |   decl                { $$ = new cDeclsNode($1); }
+decls:      decls decl          { $$ = $1; $$->Insert($2); CHECK_ERROR(); }
+        |   decl                { $$ = new cDeclsNode($1); CHECK_ERROR(); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     { $$ = $1; }
         |   array_decl ';'      { $$ = $1; }
@@ -177,10 +183,10 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   error ';'           {   }
 
 func_call:  IDENTIFIER '(' params ')' 
-                                { $$ = new cFuncExprNode($1, $3); }
-        |   IDENTIFIER '(' ')'  { $$ = new cFuncExprNode($1, nullptr); }
+                                { $$ = new cFuncExprNode($1, $3); CHECK_ERROR(); }
+        |   IDENTIFIER '(' ')'  { $$ = new cFuncExprNode($1, nullptr); CHECK_ERROR(); }
 
-varref:   varref '.' varpart    { $$ = $1; $$->Insert($3); }
+varref:   varref '.' varpart    { $$ = $1; $$->Insert($3); PROP_ERROR(); }
         | varref '[' expr ']'   { $$ = $1; $$->Insert($3); }
         | varpart               { $$ = new cVarExprNode($1); }
 
@@ -193,7 +199,7 @@ params:     params ',' param    { $$ = $1; $$->Insert($3); }
 
 param:      expr                {  }
 
-expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3); }
+expr:       expr EQUALS addit   { $$ = new cBinaryExprNode($1,new cOpNode(EQUALS),$3); CHECK_ERROR(); }
         |   addit               {   }
 
 addit:      addit '+' term      { $$ = new cBinaryExprNode($1, new cOpNode('+'), $3); }

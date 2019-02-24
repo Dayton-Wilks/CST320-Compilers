@@ -26,17 +26,17 @@ class cFuncExprNode : public cExprNode
             if (!decl)
             {
                 SemanticError(name->GetName() + " is not declared ");
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else if (!decl->IsFunc())
             {
                 SemanticError(name->GetName() + " is not a function ");
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else if (!fdecl->HasBody())
             {
                 SemanticError(name->GetName() + " is not fully defined ");
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else if (
                 (fdecl->GetParams() == nullptr && params != nullptr) ||
@@ -45,7 +45,7 @@ class cFuncExprNode : public cExprNode
                 (params != nullptr && fdecl->GetParams() != nullptr && fdecl->GetParams()->ChildCount() != params->ChildCount()))
             {
                 SemanticError(name->GetName() + " called with wrong number of arguments ");
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
 
             AddChild(name);

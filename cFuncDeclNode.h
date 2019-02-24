@@ -91,7 +91,7 @@ class cFuncDeclNode : public cDeclNode
                 if (newDecl->GetName() != oldDecl->GetType()->GetName())
                 {
                     SemanticError(nameSym->GetName() + " previously defined with different return type ");
-                    CHECK_ERROR();
+                    //CHECK_ERROR();
                 }
                 
                 // Number of Params
@@ -103,7 +103,7 @@ class cFuncDeclNode : public cDeclNode
                     if (newParams->ChildCount() != oldParams->ChildCount())
                     {
                         SemanticError(nameSym->GetName() + " redeclared with a different number of parameters ");
-                        CHECK_ERROR();
+                        //CHECK_ERROR();
                     }
                     else if (newParams->ChildCount())
                     {
@@ -113,7 +113,7 @@ class cFuncDeclNode : public cDeclNode
                             {
                                 ii = newParams->ChildCount();
                                 SemanticError(nameSym->GetName() + " previously defined with different parameters ");
-                                CHECK_ERROR();
+                                //CHECK_ERROR();
                             }
                         }
                     }
@@ -123,7 +123,7 @@ class cFuncDeclNode : public cDeclNode
                 if (HasBody() && oldDecl->HasBody())
                 {
                     SemanticError(nameSym->GetName() + " already has a definition ");
-                    CHECK_ERROR();
+                    //CHECK_ERROR();
                 }
             }
 

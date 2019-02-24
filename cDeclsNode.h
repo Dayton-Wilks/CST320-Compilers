@@ -4,8 +4,7 @@
 //
 // Defines a class to represent a list of declarations.
 //
-// Author: Phil Howard 
-// phil.howard@oit.edu
+// Author: Dayton Wilks
 //
 
 #include "cAstNode.h"
@@ -23,7 +22,36 @@ class cDeclsNode : public cDeclNode
         // Add a decl to the list
         void Insert(cDeclNode *decl)
         {
+            //fprintf(stderr, "DeclInsert<%i>\n", decl);
             AddChild(decl);
+        }
+
+        virtual bool HasChild(cSymbol* sym)
+        {
+            int count = NumChildren();
+            for (int ii = 0; ii < count; ++ii)
+            {
+                string a = sym->GetName();
+                cDeclNode* child = dynamic_cast<cDeclNode*>(GetChild(ii));
+                string b = child->GetName();
+                if (a == b)
+                    return true;
+            }
+            return false;
+        }
+
+        virtual cSymbol* GetChildSym(cSymbol* sym)
+        {
+            int count = NumChildren();
+            for (int ii = 0; ii < count; ++ii)
+            {
+                cDeclNode* child = dynamic_cast<cDeclNode*>(GetChild(ii));
+                if (sym->GetName() == child->GetName())
+                {
+                    return child->GetNameSym();
+                }
+            }
+            return nullptr;
         }
 
         virtual string NodeType() { return string("decls"); }

@@ -40,10 +40,10 @@ class cVarDeclNode : public cDeclNode
             else
             {
                SemanticError(string("Symbol ") + temp + " already defined in current scope ");
-               CHECK_ERROR();
+               //CHECK_ERROR();
             }
             
-            fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i> this<%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), sym2,this);
+            //fprintf(stderr, "VarDecl - <%s> <%i> <%s> <%i> this<%i>\n", sym->GetName().c_str(), sym, sym2->GetName().c_str(), sym2,this);
         }
 
         void Insert(cSymbol *decl)
@@ -80,10 +80,6 @@ class cVarDeclNode : public cDeclNode
             cSymbol * type = dynamic_cast<cSymbol*>(GetChild(0));
             cSymbol * toReturn = g_symbolTable.Find(type->GetName());
 
-            //fprintf(stderr, "<%s> ", );
-            // fprintf(stderr, "Struct <%d> <%d> ", dynamic_cast<cSymbol*>(GetChild(0))->GetName().c_str(), this);
-            // fprintf(stderr, (type == toReturn) ? "true\n" : "false\n");
-            //if (toReturn->getDecl() == nullptr) return false;
             return toReturn->getDecl()->IsStruct();
         }
 
@@ -93,6 +89,11 @@ class cVarDeclNode : public cDeclNode
         {
             cSymbol * type = dynamic_cast<cSymbol*>(GetChild(1));
             return type->GetName();
+        }
+
+        virtual cSymbol* GetNameSym()
+        {
+            return dynamic_cast<cSymbol*>(GetChild(1));
         }
 
         virtual string NodeType() { return string("var_decl"); }

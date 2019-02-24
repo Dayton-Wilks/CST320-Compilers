@@ -39,7 +39,7 @@ private:
             {
                 err = "Cannot assign float to char ";
                 SemanticError(err);
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else if(leftType->IsChar() && rightType->IsInt())
             {
@@ -53,14 +53,14 @@ private:
                 }
                 err = "Cannot assign int to char ";
                 SemanticError(err);
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else if(leftType->IsInt() && rightType->IsFloat())
             {
                 //std::cerr << "left:"<<leftType->GetName() <<"-right:"<<rightType->GetName()<< std::endl;
                 err = "Cannot assign float to int ";
                 SemanticError(err);
-                CHECK_ERROR();
+                //CHECK_ERROR();
             }
             else
             {

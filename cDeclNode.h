@@ -27,5 +27,8 @@ class cDeclNode : public cAstNode
         virtual bool IsStruct()     { return false; }
         //virtual bool IsType()       { return false; }
         virtual int ChildCount()    { return NumChildren(); }
+        virtual bool HasChild(cSymbol* sym) { return false; }
+        virtual cSymbol* GetChildSym(cSymbol* sym) { return nullptr; }
+        virtual cSymbol* GetNameSym() { return nullptr; }
         virtual string GetName()    = 0 ;
 };

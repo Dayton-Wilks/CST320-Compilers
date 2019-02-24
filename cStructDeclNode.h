@@ -23,7 +23,7 @@ class cStructDeclNode : public cDeclNode
             name->setDecl(this);
             g_symbolTable.Insert(name);
             
-            fprintf(stderr, "StrucDecl Name:<%s> this:<%i> NamPtr:<%i>\n", GetName().c_str(), this, name);
+            //fprintf(stderr, "StrucDecl Name:<%s> this:<%i> NamPtr:<%i>\n", GetName().c_str(), this, name);
         }
 
         virtual cDeclNode * GetType() 
@@ -38,6 +38,19 @@ class cStructDeclNode : public cDeclNode
         }
 
         virtual bool IsStruct() { return true; }
+
+        virtual bool HasChild(cSymbol* sym)
+        {
+            cDeclsNode* members = dynamic_cast<cDeclsNode*>(GetChild(0));
+            return members->HasChild(sym);
+        }
+
+        virtual cSymbol* GetChildSym(cSymbol* sym)
+        {
+            cDeclsNode* members = dynamic_cast<cDeclsNode*>(GetChild(0));
+
+            return members->GetChildSym(sym);
+        }
         
         virtual string NodeType() { return string("struct_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
