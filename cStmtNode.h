@@ -6,8 +6,10 @@
 //
 // NOTE: all statement types must inherit from this class
 //
-// Author: Phil Howard & Dayton Wilks
+// Author: Phil Howard 
 // phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
 //
 
 #include "cAstNode.h"
@@ -16,6 +18,5 @@ class cStmtNode : public cAstNode
 {
     public:
         cStmtNode() : cAstNode() {}
-        virtual string NodeType() { return string("stmt"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

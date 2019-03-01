@@ -5,36 +5,37 @@
 // Single place that includes all the ast nodes.
 // Useful for lang.y and lang.l
 //
-// Author: Phil Howard & Dayton Wilks
-// Date: 2/8/19
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
 //
 
-#include "cSemantic.h"
-
 #include "cAstNode.h"
-#include "cBaseTypeNode.h"
-#include "cSymbol.h"
-#include "cStmtNode.h"
-#include "cStmtsNode.h"
+#include "cArrayDeclNode.h"
+#include "cProgramNode.h"
+#include "cBlockNode.h"
 #include "cDeclNode.h"
 #include "cDeclsNode.h"
-#include "cBlockNode.h"
-#include "cProgramNode.h"
-#include "cPrintNode.h"
-#include "cExprNode.h"
-#include "cVarDeclNode.h"
 #include "cParamsNode.h"
-#include "cParamListNode.h"
-#include "cIntExprNode.h"
-#include "cFloatExprNode.h"
-#include "cVarExprNode.h"
+#include "cStructDeclNode.h"
+#include "cVarDeclNode.h"
+#include "cFuncDeclNode.h"
+#include "cBaseTypeNode.h"
+#include "cStmtNode.h"
+#include "cStmtsNode.h"
 #include "cIfNode.h"
-#include "cReturnNode.h"
 #include "cWhileNode.h"
 #include "cAssignNode.h"
-#include "cFuncDeclNode.h"
+#include "cPrintNode.h"
+#include "cReturnNode.h"
+//#include "cFuncCallNode.h"
 #include "cOpNode.h"
-#include "cStructDeclNode.h"
-#include "cFuncExprNode.h"
+#include "cExprNode.h"
+#include "cIntExprNode.h"
+#include "cFloatExprNode.h"
 #include "cBinaryExprNode.h"
-#include "cArrayDeclNode.h"
+#include "cVarExprNode.h"
+#include "cFuncExprNode.h"
+#include "cParamListNode.h"
+

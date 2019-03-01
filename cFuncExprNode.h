@@ -2,61 +2,91 @@
 //**************************************
 // cFuncExprNode.h
 //
-// Defines an AST node for an function.
+// Defines AST node for function calls
 //
-// Inherits from cExprNode so that function can be used anywhere 
-// expressions are used.
+// Inherits from cExprNode so that functions can be used in expressions
 //
-// Author: Dayton Wilks
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Feb. 6, 2016
 //
 
 #include "cAstNode.h"
+#include "cStmtsNode.h"
+#include "cParamListNode.h"
 #include "cExprNode.h"
-#include "cSymbolTable.h"
 
 class cFuncExprNode : public cExprNode
 {
     public:
-        // param is the value of the integer constant
-        cFuncExprNode(cSymbol * name, cParamListNode * params) : cExprNode()
+        // params are the symbol for the func decl, and the params
+        cFuncExprNode(cSymbol *name, cParamListNode *params)
+            : cExprNode()
         {
-            cDeclNode * decl = name->getDecl();
-            cFuncDeclNode* fdecl= dynamic_cast<cFuncDeclNode*>(decl);
-
-            if (!decl)
-            {
-                SemanticError(name->GetName() + " is not declared ");
-            }
-            else if (!decl->IsFunc())
-            {
-                SemanticError(name->GetName() + " is not a function ");
-            }
-            else if (!fdecl->HasBody())
-            {
-                SemanticError(name->GetName() + " is not fully defined ");
-            }
-            else if (
-                (fdecl->GetParams() == nullptr && params != nullptr) ||
-                (fdecl->GetParams() != nullptr && params == nullptr) ||
-                (fdecl->GetParams() != 0 && params == nullptr) ||
-                (params != nullptr && fdecl->GetParams() != nullptr && fdecl->GetParams()->ChildCount() != params->ChildCount()))
-            {
-                SemanticError(name->GetName() + " called with wrong number of arguments ");
-            }
-
             AddChild(name);
             AddChild(params);
+
+            if (name->GetDecl() == nullptr)
+            {
+                SemanticError(name->GetName() + " is not declared");
+                return ;
+            }
+
+            if (!name->GetDecl()->IsFunc())
+            {
+                SemanticError(name->GetName() + " is not a function");
+                return;
+            }
+
+            // already checked IsFunc() so this should be safe
+            cFuncDeclNode* func = dynamic_cast<cFuncDeclNode*>(name->GetDecl());
+            if (func == nullptr || !func->IsFullyDefined())
+            {
+                SemanticError(name->GetName() + " is not fully defined");
+                return;
+            }
+
+            cDeclsNode *args = func->GetParams();
+
+            if ( (args == nullptr && params != nullptr) ||
+                 (args != nullptr && params == nullptr))
+            {
+                SemanticError(name->GetName() + 
+                        " called with wrong number of arguments");
+                return;
+            }
+            else if (args != nullptr && params != nullptr)
+            {
+                if (args->NumDecls() != params->NumParams())
+                {
+                    SemanticError(name->GetName() + 
+                            " called with wrong number of arguments");
+                    return;
+                }
+
+                for (int ii=0; ii<args->NumDecls(); ii++)
+                {
+                    if (!args->GetDecl(ii)->IsCompatibleWith(
+                                params->GetParam(ii)->GetType()))
+                    {
+                        SemanticError(name->GetName() + 
+                                " called with incompatible argument");
+                        return;
+                    }
+                }
+            }
         }
 
-        virtual cDeclNode * GetType()
+        // Return the type of the var
+        virtual cDeclNode* GetType()
         {
-            cSymbol * sym = dynamic_cast<cSymbol*>(GetChild(0));
-            cFuncDeclNode* decl =  dynamic_cast<cFuncDeclNode*>(sym->getDecl());
-            return decl->GetType();
+            cSymbol* sym = dynamic_cast<cSymbol*>(GetChild(0));
+            return sym->GetDecl()->GetType();
         }
-        
-        virtual bool IsVar() { return true; }
-        virtual bool IsChar() { return GetType()->IsChar(); }
+
+
+        // return string representation of the node
         virtual string NodeType() { return string("funcCall"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

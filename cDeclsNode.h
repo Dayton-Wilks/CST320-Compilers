@@ -4,17 +4,20 @@
 //
 // Defines a class to represent a list of declarations.
 //
-// Author: Dayton Wilks
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
 //
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
 
-class cDeclsNode : public cDeclNode
+class cDeclsNode : public cAstNode
 {
     public:
         // param is the first decl in this decls
-        cDeclsNode(cAstNode *decl) : cDeclNode()
+        cDeclsNode(cDeclNode *decl) : cAstNode()
         {
             AddChild(decl);
         }
@@ -25,35 +28,14 @@ class cDeclsNode : public cDeclNode
             AddChild(decl);
         }
 
-        virtual bool HasChild(cSymbol* sym)
+        int NumDecls() { return NumChildren(); }
+
+        cDeclNode *GetDecl(int index)
         {
-            int count = NumChildren();
-            for (int ii = 0; ii < count; ++ii)
-            {
-                string a = sym->GetName();
-                cDeclNode* child = dynamic_cast<cDeclNode*>(GetChild(ii));
-                string b = child->GetName();
-                if (a == b)
-                    return true;
-            }
-            return false;
+            return (cDeclNode *)GetChild(index);
         }
 
-        virtual cSymbol* GetChildSym(cSymbol* sym)
-        {
-            int count = NumChildren();
-            for (int ii = 0; ii < count; ++ii)
-            {
-                cDeclNode* child = dynamic_cast<cDeclNode*>(GetChild(ii));
-                if (sym->GetName() == child->GetName())
-                {
-                    return child->GetNameSym();
-                }
-            }
-            return nullptr;
-        }
-
+        // return the XML node name
         virtual string NodeType() { return string("decls"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-        virtual string GetName() { return "delcsNode"; }
 };

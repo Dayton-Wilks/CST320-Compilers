@@ -2,32 +2,26 @@
 //**************************************
 // cParamsNode.h
 //
-// Defines an AST node for a functions parameters
+// Defines a class to represent a list of declarations.
 //
-// Author: Dayton Wilks
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
 //
 
 #include "cAstNode.h"
+#include "cDeclNode.h"
 
-class cParamsNode : public cAstNode
+class cParamsNode : public cDeclsNode
 {
     public:
-        cParamsNode(cAstNode * decl) : cAstNode() 
+        // param is the first decl in this decls
+        cParamsNode(cDeclNode *decl) : cDeclsNode(decl)
         {
-            AddChild(decl);
         }
 
-        void Insert(cAstNode * decl)
-        {
-            AddChild(decl);
-        }
-
-        int ChildCount() { return NumChildren(); }
-        cVarDeclNode * GetParam(int index) 
-        {
-            return dynamic_cast<cVarDeclNode*>(GetChild(index));
-        }
-
+        // return the XML node name
         virtual string NodeType() { return string("args"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

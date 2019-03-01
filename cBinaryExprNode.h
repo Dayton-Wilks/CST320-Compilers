@@ -2,54 +2,50 @@
 //**************************************
 // cBinaryExprNode.h
 //
-// Class for creating a binary operation
+// Defines AST node for binary expressions.
+// Inherits from cExprNode
 //
-// Author: Dayton Wilks
-// Date: 2/8/18
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 29, 2015
+//
 
 #include "cAstNode.h"
-#include "cSymbolTable.h"
+#include "cOpNode.h"
+#include "cExprNode.h"
 
 class cBinaryExprNode : public cExprNode
 {
     public:
-        cBinaryExprNode(cExprNode * left, cOpNode * op, cExprNode * right) : cExprNode(left, op, right) { }
-
-        virtual cDeclNode * GetType() 
+        // params are the left and right expressions and the operation.
+        // The operation is a char: '+', '-', etc.
+        cBinaryExprNode(cExprNode *left, int op, cExprNode *right)
+            : cExprNode()
         {
-            cExprNode * lExpr = dynamic_cast<cExprNode*>(GetChild(0));
-            cExprNode * rExpr = dynamic_cast<cExprNode*>(GetChild(2));
-            cDeclNode * left = lExpr->GetType();
-            cDeclNode * right = rExpr->GetType();
-
-            if(left->IsFloat() || right->IsFloat())
-            {
-                return g_symbolTable.Find("float")->getDecl();
-            }
-            else if (
-                left->IsChar() || right->IsChar() ||
-                ( 
-                    (!lExpr->IsVar() && lExpr->IsChar()) &&
-                    (!rExpr->IsVar() && rExpr->IsChar()) 
-                )
-            )
-            {
-                return g_symbolTable.Find("char")->getDecl();
-            }
-            else 
-            {
-                return g_symbolTable.Find("int")->getDecl();
-            }
+            AddChild(left);
+            AddChild(new cOpNode(op));
+            AddChild(right);
         }
 
-        virtual bool IsVar() 
+        // return the type of the expression
+        cDeclNode* GetType()
         {
-            cExprNode * left = dynamic_cast<cExprNode*>(GetChild(0));
-            cExprNode * right = dynamic_cast<cExprNode*>(GetChild(2));
-            if (left->IsVar() || right->IsVar())
-                return true;
-            return false;
+            cExprNode *left = dynamic_cast<cExprNode *>(GetChild(0));
+            cExprNode *right= dynamic_cast<cExprNode *>(GetChild(2));
+            if (left->GetType() == right->GetType())
+                return left->GetType();
+            else if (left->GetType()->IsFloat())
+                return left->GetType();
+            else if (right->GetType()->IsFloat())
+                return right->GetType();
+            else if (left->GetType()->Sizeof() >=
+                     right->GetType()->Sizeof())
+                return left->GetType();
+            else
+                return right->GetType();
         }
+
         virtual string NodeType() { return string("expr"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

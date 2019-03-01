@@ -6,14 +6,14 @@
 ## Author: Phil Howard 
 ## phil.howard@oit.edu
 ##
-## Date: Jan. 18, 2015
+## Date: Nov. 28, 2015
 ##
 
 COPTS=-Wall -g -c  -O0 -std=c++11
 OBJS=main.o \
 	 langlex.o \
 	 langparse.o \
-	 cVisitor.o
+	 cVisitor.o \
 
 all: lang
 

@@ -8,53 +8,46 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
+// Date: Nov. 28, 2015
+//
 
-#include <iostream>
-using std::cerr;
-using std::endl;
 #include <string>
 
 using std::string;
-#include "cAstNode.h"
-//#include "tokens.h"
 
-// #define VAR_TYPE 0
-// #define STRUCT_TYPE 1
-// #define ARRAY_TYPE 2
+#include "cAstNode.h"
+
+class cDeclNode;
 
 class cSymbol : public cAstNode
 {
     public:
         // param is name of symbol
-        cSymbol(string name, int type = 258) : cAstNode()
+        cSymbol(string name) : cAstNode()
         {
             m_id = ++nextId;        // get next available ID
             m_name = name;
-            m_type = type;
-            m_declNode = nullptr;
+            m_decl = nullptr;
         }
 
         // return name of symbol
         string GetName() { return m_name; }
-        short  GetType() { return m_type; }
-        void   SetType(int v) { m_type = v; } 
 
+        cDeclNode *GetDecl() { return m_decl; }
+
+        void SetDecl(cDeclNode *decl) 
+        {
+            m_decl = decl;
+        }
+
+        // return string representation of symbol
         virtual string AttributesToString()
         {
             string result(" id=\"");
             result += std::to_string(m_id);
             result += "\" name=\"" + m_name + "\"";
+
             return result;
-        }
-
-        void setDecl(cDeclNode * node)
-        {
-            m_declNode = node;
-        }
-
-        cDeclNode * getDecl()
-        {
-            return m_declNode;
         }
 
         virtual string NodeType() { return string("sym"); }
@@ -63,6 +56,5 @@ class cSymbol : public cAstNode
         static long long nextId;        // Next avail symbol ID
         long long m_id;                 // Unique ID for this symbol
         string m_name;                  // name of symbol
-        int m_type;
-        cDeclNode * m_declNode;
+        cDeclNode *m_decl;              // The declaration that defines this sym
 };

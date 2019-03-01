@@ -2,39 +2,41 @@
 //**************************************
 // cFloatExprNode.h
 //
-// Defines an AST node for an float constant (literals).
+// Defines AST node for a float constant (literal)
+// Inherits from cExprNode so float constants can be used in any expression.
 //
-// Inherits from cExprNode so that float constants can be used anywhere 
-// expressions are used.
+// Author: Phil Howard 
+// phil.howard@oit.edu
 //
-// Author: Dayton Wilks
+// Date: Nov. 29, 2015
 //
 
 #include "cAstNode.h"
 #include "cExprNode.h"
-#include "cSymbolTable.h"
 
 class cFloatExprNode : public cExprNode
 {
     public:
-        cFloatExprNode(float value) : cExprNode()
+        // param is the value of the constant (literal)
+        cFloatExprNode(double value)
         {
             m_value = value;
         }
 
-        virtual cDeclNode * GetType()
+        // Return the type of the expr. This is the type float
+        virtual cDeclNode *GetType()
         {
-            return g_symbolTable.Find("float")->getDecl();
+            return g_SymbolTable.Find("float")->GetDecl();
         }
 
-        virtual string AttributesToString() 
+        // Return a string representation of the node
+        virtual string AttributesToString()
         {
             return " value=\"" + std::to_string(m_value) + "\"";
         }
 
         virtual string NodeType() { return string("float"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-
     protected:
-        float m_value;        // value of integer constant (literal)
+        double m_value;     // value of the constant (literal)
 };

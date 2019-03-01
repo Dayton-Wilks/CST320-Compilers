@@ -2,32 +2,41 @@
 //**************************************
 // cParamListNode.h
 //
-// Defines an AST node for an parameter list.
+// Defines AST node for actual params passed to a function
 //
-// Author: Dayton Wilks
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 29, 2015
 //
 
 #include "cAstNode.h"
+#include "cExprNode.h"
 
 class cParamListNode : public cAstNode
 {
     public:
-        cParamListNode(cAstNode * expr) : cAstNode()
+        // param is first actual param passed to function
+        cParamListNode(cExprNode *param)
+            : cAstNode()
         {
-            AddChild(expr);
+            AddChild(param);
         }
 
-        void Insert(cAstNode * expr)
+        // add the next actual param
+        void Insert(cExprNode *param)
         {
-            AddChild(expr);
+            AddChild(param);
         }
 
-        int ChildCount() { return NumChildren(); }
-        cExprNode* GetArgument(int index)
+        int NumParams() { return NumChildren(); }
+
+        cExprNode *GetParam(int index)
         {
-            return dynamic_cast<cExprNode*>(GetChild(index));
+            return (cExprNode *)GetChild(index);
         }
 
+        // return a string representation of the node
         virtual string NodeType() { return string("params"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

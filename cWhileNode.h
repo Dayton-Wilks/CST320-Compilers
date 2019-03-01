@@ -2,24 +2,32 @@
 //**************************************
 // cWhileNode.h
 //
-// Defines an AST node for a while node, inherits from cStmtNode 
-// so a while loop can be used anywhere a stmt can.
+// Defines AST node for a while statement
 //
-// Author: Dayton Wilks
+// Inherits from cStmtNode because this is a statement
+//
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 29, 2015
 //
 
 #include "cAstNode.h"
 #include "cStmtNode.h"
+#include "cExprNode.h"
 
 class cWhileNode : public cStmtNode
 {
-public:
-    cWhileNode(cExprNode * cond, cStmtNode * work) : cStmtNode() 
-    {
-        AddChild(cond);
-        AddChild(work);
-    }
-    
-    virtual string NodeType() { return string("while"); }
-    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+    public:
+        // params are the condition and the statement
+        cWhileNode(cExprNode *cond, cStmtNode *stmt)
+            : cStmtNode()
+        {
+            AddChild(cond);
+            AddChild(stmt);
+        }
+
+        // return a string representation of the node
+        virtual string NodeType() { return string("while"); }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

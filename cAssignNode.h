@@ -2,82 +2,43 @@
 //**************************************
 // cAssignNode.h
 //
-// Class for an assignment operation
+// Defines AST node for assignment statments
 //
-// Author: Dayton Wilks
-// Date: 2/8/18
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
+//
+
 #include "cAstNode.h"
+#include "cStmtNode.h"
+#include "cExprNode.h"
+#include "cVarExprNode.h"
 
 class cAssignNode : public cStmtNode
 {
-public:
-    cAssignNode(cVarExprNode * left, cExprNode * right) : cStmtNode() 
-    {
-        IsAssignable(left, right);
-        AddChild(left);
-        AddChild(right);
-    }
-    
-    virtual string NodeType() { return string("assign"); }
-    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-    
-private:
-    bool IsAssignable(cVarExprNode * left, cExprNode * right)
-    {
-        if (left == nullptr || right == nullptr) return false;
-        
-        cDeclNode * leftType = left->GetType();
-        cDeclNode * rightType = right->GetType();
-
-        if(leftType != nullptr && rightType != nullptr)
+    public:
+        // params are the lval and the expression
+        cAssignNode(cVarExprNode *lval, cExprNode *expr)
+            : cStmtNode()
         {
-            string err;
-            if(leftType->IsChar() && rightType->IsFloat())
-            {
-                err = "Cannot assign float to char ";
-                SemanticError(err);
-            }
-            else if(leftType->IsChar() && rightType->IsInt())
-            {
-                if (!right->IsVar())
-                {
-                    cIntExprNode * num = 
-                        (static_cast<cIntExprNode*>(right));
-                    if (num->IsChar())
-                    {
-                        return true;
-                    }
-                }
-                err = "Cannot assign int to char ";
-                SemanticError(err);
-            }
-            else if(leftType->IsInt() && rightType->IsFloat())
-            {
-                err = "Cannot assign float to int ";
-                SemanticError(err);
-            }
-            else if (leftType->IsStruct() || rightType->IsStruct())
-            {
-                string rightTypeName = 
-                    dynamic_cast<cVarDeclNode*>(rightType)
-                    ->GetType()->getDecl()->GetName();
-                string leftTypeName = 
-                    dynamic_cast<cVarDeclNode*>(leftType)
-                    ->GetType()->getDecl()->GetName();
+            AddChild(lval);
+            AddChild(expr);
 
-                if (rightTypeName != leftTypeName)
-                {
-                    err = "Cannot assign ";
-                    err += rightTypeName + " to ";
-                    err += leftTypeName + " ";
-                    SemanticError(err);
-                }
-            }
-            else
+            if (!lval->GetDecl()->IsVar())
             {
-                return true;
+                SemanticError(lval->GetDecl()->GetName() +
+                        " is not an lval");
+            }
+            else if (!lval->GetType()->IsCompatibleWith(expr->GetType()))
+            {
+                SemanticError("Cannot assign " +
+                        expr->GetType()->GetName() +
+                        " to " +
+                        lval->GetType()->GetName());
             }
         }
-        return false;
-    }
+
+        virtual string NodeType() { return string("assign"); }
+        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

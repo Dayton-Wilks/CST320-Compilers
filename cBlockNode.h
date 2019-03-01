@@ -31,12 +31,4 @@ class cBlockNode : public cStmtNode
 
         virtual string NodeType() { return string("block"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-        cDeclsNode *GetDecls()
-        {
-            return static_cast<cDeclsNode*>(GetChild(0));
-        }
-        cStmtsNode *GetStmts()
-        {
-            return static_cast<cStmtsNode*>(GetChild(1));
-        }
 };

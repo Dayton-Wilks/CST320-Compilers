@@ -4,13 +4,13 @@
 //
 // Defines base class for all expressions
 //
-// This is a pure virtual class because there is no definition for
-// cAstNode::ToString()
-//
-// Author: Phil Howard & Dayton Wilks
+// Author: Phil Howard 
 // phil.howard@oit.edu
 //
+// Date: Nov. 28, 2015
+//
 
+#include "cAstNode.h"
 #include "cStmtNode.h"
 
 class cExprNode : public cStmtNode
@@ -18,19 +18,7 @@ class cExprNode : public cStmtNode
     public:
         cExprNode() : cStmtNode() {}
 
-        cExprNode(cAstNode *left, cAstNode *op, cAstNode *right) : cExprNode()
-        {
-            AddChild(left);
-            AddChild(op);
-            AddChild(right);
-        }
-
-        // pure virtual
-        virtual cDeclNode * GetType() = 0;
-
-        virtual bool IsVar() { return false; }
-        virtual bool IsChar() { return false; }
-        
-        virtual string NodeType() { return string("expr"); }
+        // return the type of the expression
+        virtual cDeclNode *GetType() = 0;
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

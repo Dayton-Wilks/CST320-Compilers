@@ -10,6 +10,8 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
+// Date: Nov. 28, 2015
+//
 
 #include "cAstNode.h"
 #include "cStmtNode.h"
@@ -24,6 +26,7 @@ class cPrintNode : public cStmtNode
             AddChild(expr);
         }
 
+        // return a string representation of the node
         virtual string NodeType() { return string("print"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };
