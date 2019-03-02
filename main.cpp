@@ -17,6 +17,7 @@
 #include "lex.h"
 #include "astnodes.h"
 #include "langparse.h"
+#include "cComputeSize.h"
 
 // define global variables
 cSymbolTable g_SymbolTable;
@@ -24,8 +25,8 @@ long long cSymbol::nextId;
 
 // takes two string args: input_file, and output_file
 int main(int argc, char **argv)
-{
-    std::cout << "Philip Howard" << std::endl;
+{ 
+    std::cout << "Dayton Wilks\n" << std::endl;
 
     const char *outfile_name;
     int result = 0;
@@ -65,6 +66,9 @@ int main(int argc, char **argv)
     {
         if (result == 0)
         {
+            cComputeSize sizeVisitor;
+            sizeVisitor.VisitAllNodes(yyast_root);
+
             output << yyast_root->ToString() << std::endl;
         } else {
             output << yynerrs << " Errors in compile\n";

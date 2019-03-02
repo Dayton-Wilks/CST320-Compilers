@@ -38,4 +38,23 @@ class cDeclsNode : public cAstNode
         // return the XML node name
         virtual string NodeType() { return string("decls"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        virtual string AttributesToString()   
+        {
+            string result("");
+            if (m_size != 0)
+            {
+                result += " size=\"";
+                result += std::to_string(m_size);
+                result += "\"";
+            }
+
+            return result;
+        }
+
+        int GetSize() { return m_size; }
+        void SetSize(int s) { m_size = s; }
+ 
+    protected:
+        int m_size = 0;
 };

@@ -50,6 +50,6 @@ class cBaseTypeNode : public cDeclNode
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
     protected:
         string m_name;
-        int    m_size;
+        // int    m_size;
         bool   m_isFloat;
 };

@@ -54,6 +54,7 @@ class cVarDeclNode : public cDeclNode
                 error += " already defined in current scope";
                 SemanticError(error);
             }
+            SetSize(type_id->GetDecl()->GetSize());
         }
 
         virtual bool IsVar() { return true; }

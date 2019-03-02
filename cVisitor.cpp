@@ -38,6 +38,7 @@ void cVisitor::Visit(cFuncExprNode *node)     { VisitAllChildren(node); }
 void cVisitor::Visit(cIfNode *node)           { VisitAllChildren(node); }
 void cVisitor::Visit(cIntExprNode *node)      { VisitAllChildren(node); }
 void cVisitor::Visit(cOpNode *node)           { VisitAllChildren(node); }
+void cVisitor::Visit(cParamsNode *node)       { VisitAllChildren(node); }
 void cVisitor::Visit(cParamListNode *node)    { VisitAllChildren(node); }
 void cVisitor::Visit(cPrintNode *node)        { VisitAllChildren(node); }
 void cVisitor::Visit(cReturnNode *node)       { VisitAllChildren(node); }
