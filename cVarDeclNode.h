@@ -54,7 +54,7 @@ class cVarDeclNode : public cDeclNode
                 error += " already defined in current scope";
                 SemanticError(error);
             }
-            SetSize(type_id->GetDecl()->GetSize());
+            //SetSize(type_id->GetDecl()->GetSize());
         }
 
         virtual bool IsVar() { return true; }
@@ -74,9 +74,24 @@ class cVarDeclNode : public cDeclNode
         }
 
         // Return the size of the var
-        virtual int Sizeof() { return GetType()->Sizeof(); }
+        //virtual int Sizeof() { return GetType()->Sizeof(); }
+        virtual int Sizeof() { return GetType()->GetSize(); }
 
         // return a string representation of the node
         virtual string NodeType() { return string("var_decl"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        virtual string AttributesToString()   
+        {
+            string result("");
+            if (m_size != 0)
+            {
+                result += " size=\"";
+                result += std::to_string(m_size);
+                result += "\" offset=\""; 
+                result += std::to_string(m_offset) + "\"";
+            }
+
+            return result;
+        }
 };

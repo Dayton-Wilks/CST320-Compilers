@@ -10,6 +10,8 @@
 
 #include <string>
 using std::string;
+#include <algorithm> 
+using std::max;
 #include "cVisitor.h"
 
 class cComputeSize : public cVisitor
@@ -25,29 +27,28 @@ class cComputeSize : public cVisitor
 
         virtual void Visit(cVarDeclNode* node)
         {
-            int size = node->GetSize();
-            int off;
-            if (size != 1 && (off = m_offset % 4) != 0)
-                m_offset += 4 - off;
+            int size = node->Sizeof();
+            node->SetSize(size);
+
+            if (size != 1) ModFix(m_offset, 4);
 
             node->SetOffset(m_offset);
             m_offset += size;
-            //fprintf(stderr, "test<%d><%d>\n", m_size, m_offset);
+msg("V");
         }
         
         virtual void Visit(cDeclsNode *node)
         {
-            int off = m_offset;
+            int off = m_offset; // save start offset
 
-            int t = m_offset % 4;
-            if (t != 0) m_offset += 4 - t;
+            // Fix to allow offset
+            ModFix(m_offset, 4);
 
-            msg("DI");
+msg("DI", IN);
             VisitAllChildren(node);
-            msg("DO");
+msg("DO", OUT);
 
             node->SetSize(m_offset - off);
-            // if (m_offset > m_high) m_high = m_offset;
         }
 
         virtual void Visit(cBlockNode * node)
@@ -56,36 +57,93 @@ class cComputeSize : public cVisitor
             int high = m_high;
             m_high = 0;
 
-            msg("BI");
-            b++;
+msg("BI", IN);
             VisitAllChildren(node);
-            b--;
-            msg("BO");
+msg("BO", OUT);
 
-            if (m_offset > m_high) m_high = m_offset;
+            m_high = max(m_high, m_offset);
             node->SetSize(m_high - off);
 
-            if (high > m_high) m_high = high;
+            m_high = max(high, m_high);
             m_offset = off;
         }
 
-        void msg(string str)
+        virtual void Visit(cFuncDeclNode* node)
         {
-            if (!t) return;
+            int off = m_offset;
+            int high = m_high;
+
+            m_offset = 0;
+            m_high = 0;
+
+msg("FI", IN);
+            VisitAllChildren(node);
+msg("FO", OUT);
+
+            ModFix(m_offset, 4);
+
+            node->SetSize(max(m_offset, m_high));
+            node->SetOffset(0);
+
+            m_offset = off;
+            m_high = high;
+        }
+
+        virtual void Visit(cStructDeclNode* node)
+        {
+            int off = m_offset;
+            int high = m_high;
+
+            m_offset = 0;
+            m_high = 0;
+
+msg("SI", IN);
+            VisitAllChildren(node);
+msg("SO", OUT);
+
+            node->SetSize(m_offset);
+            node->SetOffset(0);
+
+            m_offset = off;
+            m_high = high;
+        }
+
+        virtual void Visit(cParamsNode* node)
+        {
+            int temp = m_offset;
+            VisitAllChildren(node);
+
+            ModFix(m_offset, 4);
+
+            node->SetSize(m_offset - temp);
+        }
+
+        void msg(string str, short tab = 0)
+        {
+            if (!x) return;
+            if (tab == OUT) b += tab;
             string t;
             for (int ii = 0; ii < b; ++ii) t+="    ";
             str = t + str;
             str += ": off<%d> high<%d>\n";
             fprintf(stderr, str.c_str(), m_offset, m_high);
+            if (tab == IN)b += tab;
+        }
+
+        static inline void ModFix(int &var, int modVal = 4)
+        {
+            int temp = var % modVal;
+            if (temp) var += modVal - temp;
         }
         
     protected:
         int m_offset = 0;
-        int m_size = 0;
         int m_high = 0;
 
         int b = 0;
-        bool t = false;
+        bool x = false;
+        const short IN = 1;
+        const short OUT = -1;
 };
 
 // cDeclNode::iterator it;

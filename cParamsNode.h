@@ -24,4 +24,17 @@ class cParamsNode : public cDeclsNode
         // return the XML node name
         virtual string NodeType() { return string("args"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        virtual string AttributesToString()   
+        {
+            string result("");
+            if (m_size != 0)
+            {
+                result += " size=\"";
+                result += std::to_string(m_size);
+                result += "\"";
+            }
+
+            return result;
+        }
 };

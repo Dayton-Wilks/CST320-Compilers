@@ -168,6 +168,20 @@ class cFuncDeclNode : public cDeclNode
             return name->GetName(); 
         }
 
+        virtual string AttributesToString()   
+        {
+            string result("");
+            if (m_size != 0)
+            {
+                result += " size=\"";
+                result += std::to_string(m_size);
+                result += "\" offset=\""; 
+                result += std::to_string(m_offset) + "\"";
+            }
+
+            return result;
+        }
+
         // Return a string representation of the node
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
