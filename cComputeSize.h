@@ -41,7 +41,6 @@ msg("V");
         {
             int off = m_offset; // save start offset
 
-            // Fix to allow offset
             ModFix(m_offset, 4);
 
 msg("DI", IN);
@@ -113,7 +112,20 @@ msg("SO", OUT);
             int temp = m_offset;
             VisitAllChildren(node);
 
-            ModFix(m_offset, 4);
+            m_offset = temp;
+            cDeclNode::iterator it;
+            for (it=node->FirstChild(); it!=node->LastChild(); it++)
+            {
+                if ((*it) != nullptr) 
+                {
+                    cDeclNode* tnode = dynamic_cast<cDeclNode*>(*it);
+                    tnode->SetOffset(m_offset);
+                    m_offset += tnode->GetSize();
+                    ModFix(m_offset, 4);
+                }
+            }
+
+            //ModFix(m_offset, 4);
 
             node->SetSize(m_offset - temp);
         }

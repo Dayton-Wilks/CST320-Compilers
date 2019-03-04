@@ -170,24 +170,23 @@ class cVarExprNode : public cExprNode
         virtual string AttributesToString()   
         {
             string result("");
-            if (m_size != 0)
+            int size = GetSize();
+            if (size != 0)
             {
                 result += " size=\"";
-                result += std::to_string(m_size);
+                result += std::to_string(size);
                 result += "\" offset=\""; 
-                result += std::to_string(m_offset) + "\"";
+                result += std::to_string(GetOffset()) + "\"";
             }
 
             return result;
         }
 
-        int GetSize() { return m_size; }
-        void SetSize(int s) { m_size = s; }
+        int GetSize() { return GetDecl()->GetSize(); }
 
-        int GetOffset() { return m_offset; }
-        void SetOffset(int off) { m_offset = off; }
+        int GetOffset() { return GetDecl()->GetOffset();; }
         
     protected:
-        int m_size = 0;
-        int m_offset = 0;
+        // int m_size = 0;
+        // int m_offset = 0;
 };
