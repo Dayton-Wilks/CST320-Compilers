@@ -27,123 +27,139 @@ class cComputeSize : public cVisitor
 
         virtual void Visit(cVarDeclNode* node)
         {
+            // Set size of var
             int size = node->Sizeof();
             node->SetSize(size);
 
+            // If not char, round up
             if (size != 1) ModFix(m_offset, 4);
 
+            // Increment offset by var size
             node->SetOffset(m_offset);
             m_offset += size;
-msg("V");
         }
         
         virtual void Visit(cDeclsNode *node)
         {
-            int off = m_offset; // save start offset
+            // Save offset
+            int off = m_offset;
 
+            // If not char, round up
             ModFix(m_offset, 4);
 
-msg("DI", IN);
             VisitAllChildren(node);
-msg("DO", OUT);
 
+            // Set size from offset diff
             node->SetSize(m_offset - off);
         }
 
         virtual void Visit(cBlockNode * node)
         {
+            // Save off/high
             int off = m_offset;
             int high = m_high;
+
             m_high = 0;
 
-msg("BI", IN);
             VisitAllChildren(node);
-msg("BO", OUT);
 
+            // Set new high, calc size
             m_high = max(m_high, m_offset);
             node->SetSize(m_high - off);
 
+            // Keep largest high, set offset
             m_high = max(high, m_high);
             m_offset = off;
         }
 
         virtual void Visit(cFuncDeclNode* node)
         {
+            // Save off/high
             int off = m_offset;
             int high = m_high;
 
             m_offset = 0;
             m_high = 0;
 
-msg("FI", IN);
             VisitAllChildren(node);
-msg("FO", OUT);
 
             ModFix(m_offset, 4);
 
+            // Set size to high
             node->SetSize(max(m_offset, m_high));
-            node->SetOffset(0);
+            node->SetOffset(0); // Always 0
 
+            // Restore off/high
             m_offset = off;
             m_high = high;
         }
 
         virtual void Visit(cStructDeclNode* node)
         {
+            // Save off/high
             int off = m_offset;
             int high = m_high;
 
             m_offset = 0;
             m_high = 0;
 
-msg("SI", IN);
             VisitAllChildren(node);
-msg("SO", OUT);
 
+            // Save size
             node->SetSize(m_offset);
-            node->SetOffset(0);
+            node->SetOffset(0); // Always 0
 
+            // Restore off/high
             m_offset = off;
             m_high = high;
         }
 
         virtual void Visit(cParamsNode* node)
         {
-            int temp = m_offset;
+            // Save off
+            int off = m_offset;
+
             VisitAllChildren(node);
 
-            m_offset = temp;
+            m_offset = off;
             cDeclNode::iterator it;
             for (it=node->FirstChild(); it!=node->LastChild(); it++)
-            {
+            { // Calculate offset of each param arg
                 if ((*it) != nullptr) 
                 {
                     cDeclNode* tnode = dynamic_cast<cDeclNode*>(*it);
+
                     tnode->SetOffset(m_offset);
                     m_offset += tnode->GetSize();
+
                     ModFix(m_offset, 4);
                 }
             }
-
-            //ModFix(m_offset, 4);
-
-            node->SetSize(m_offset - temp);
+            // Calculate size with new and old offset
+            node->SetSize(m_offset - off);
         }
 
-        void msg(string str, short tab = 0)
+        virtual void Visit(cVarExprNode* node)
         {
-            if (!x) return;
-            if (tab == OUT) b += tab;
-            string t;
-            for (int ii = 0; ii < b; ++ii) t+="    ";
-            str = t + str;
-            str += ": off<%d> high<%d>\n";
-            fprintf(stderr, str.c_str(), m_offset, m_high);
-            if (tab == IN)b += tab;
+            // Save off
+            int varOff = 0;
+            cDeclNode::iterator it;
+            for (it=node->FirstChild(); it!=node->LastChild(); it++)
+            { // Add offsets to get final offset
+                if ((*it) != nullptr) 
+                {
+                    cDeclNode* tnode = dynamic_cast<cSymbol*>(*it)->GetDecl();
+
+                    node->SetSize(tnode->GetSize());
+                    varOff += tnode->GetOffset();
+                }
+            }
+            // Set offset for varExpr
+            node->SetOffset(varOff);
         }
 
         static inline void ModFix(int &var, int modVal = 4)
-        {
+        { // If var not cleanly divisible by modVal, round up so it is.
             int temp = var % modVal;
             if (temp) var += modVal - temp;
         }
@@ -151,18 +167,4 @@ msg("SO", OUT);
     protected:
         int m_offset = 0;
         int m_high = 0;
-
-        int b = 0;
-        bool x = false;
-        const short IN = 1;
-        const short OUT = -1;
 };
-
-// cDeclNode::iterator it;
-//             int size = 0;
-//             for (it=node->FirstChild(); it!=node->LastChild(); it++)
-//             {
-//                 if ((*it) != nullptr) size += dynamic_cast<cDeclNode*>(*it)->GetSize();
-//             }
-//             node->SetSize(size);
-
