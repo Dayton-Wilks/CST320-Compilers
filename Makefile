@@ -14,6 +14,7 @@ OBJS=main.o \
 	 langlex.o \
 	 langparse.o \
 	 cVisitor.o \
+	 emit.o \
 
 all: lang
 
@@ -25,6 +26,9 @@ clean:
 	rm -f lang
 	rm -f out.xml
 	rm -f out2.xml
+	rm -f langout.sl
+	rm -f langout.slb
+	rm -f out
 
 .cpp.o:
 	g++ $(COPTS) $? -o $@

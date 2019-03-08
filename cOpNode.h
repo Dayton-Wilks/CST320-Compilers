@@ -58,6 +58,7 @@ class cOpNode : public cAstNode
 
             return result;
         }
+        int GetOpCode() { return m_op; }
     protected:
         int m_op;      // the operand
 };

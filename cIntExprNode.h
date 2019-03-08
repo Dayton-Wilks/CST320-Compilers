@@ -42,6 +42,7 @@ class cIntExprNode : public cExprNode
             return " value=\"" + std::to_string(m_value) + "\"";
         }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        int GetValue() { return m_value; }
     protected:
         int m_value;        // value of integer constant (literal)
 };

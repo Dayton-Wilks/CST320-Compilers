@@ -48,4 +48,8 @@ class cBinaryExprNode : public cExprNode
 
         virtual string NodeType() { return string("expr"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        cExprNode* GetLeft() { return dynamic_cast<cExprNode *>(GetChild(0)); }
+        cOpNode* GetOp() { return dynamic_cast<cOpNode *>(GetChild(1)); }
+        cExprNode* GetRight() { return dynamic_cast<cExprNode *>(GetChild(2)); }
 };

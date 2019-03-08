@@ -26,6 +26,7 @@ void cVisitor::VisitAllChildren(cAstNode *node)
 }
 
 void cVisitor::Visit(cAstNode *node)          { VisitAllChildren(node); }
+void cVisitor::Visit(cProgramNode *node)      { VisitAllChildren(node); }
 void cVisitor::Visit(cAssignNode *node)       { VisitAllChildren(node); }
 void cVisitor::Visit(cBinaryExprNode *node)   { VisitAllChildren(node); }
 void cVisitor::Visit(cBlockNode *node)        { VisitAllChildren(node); }
