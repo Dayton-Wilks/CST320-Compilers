@@ -37,4 +37,11 @@ class cParamsNode : public cDeclsNode
 
             return result;
         }
+
+        int NumArgs() { return NumChildren(); }
+
+        cDeclNode *GetArg(int index)
+        {
+            return (cDeclNode *)GetChild(index);
+        }
 };

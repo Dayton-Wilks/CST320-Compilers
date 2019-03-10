@@ -47,6 +47,9 @@ class cBlockNode : public cStmtNode
 
         int GetSize() { return m_size; }
         void SetSize(int s) { m_size = s; }
+
+        cDeclsNode* GetDeclsNode() { return dynamic_cast<cDeclsNode*>(GetChild(0)); }
+        cStmtsNode* GetStmtsNode() { return dynamic_cast<cStmtsNode*>(GetChild(1)); }
  
     protected:
         int m_size = 0;

@@ -15,6 +15,7 @@
 #include "cAstNode.h"
 #include "cStmtNode.h"
 #include "cExprNode.h"
+#include "cStmtsNode.h"
 
 class cWhileNode : public cStmtNode
 {
@@ -30,4 +31,7 @@ class cWhileNode : public cStmtNode
         // return a string representation of the node
         virtual string NodeType() { return string("while"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+
+        cExprNode* GetCond() { return dynamic_cast<cExprNode*>(GetChild(0)); }
+        cStmtNode* GetStmts() { return dynamic_cast<cStmtNode*>(GetChild(1)); }
 };

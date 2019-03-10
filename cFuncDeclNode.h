@@ -181,7 +181,7 @@ class cFuncDeclNode : public cDeclNode
 
             return result;
         }
-
+        
         // Return a string representation of the node
         virtual string NodeType() { return string("func"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

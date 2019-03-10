@@ -33,7 +33,7 @@ class cParamListNode : public cAstNode
 
         cExprNode *GetParam(int index)
         {
-            return (cExprNode *)GetChild(index);
+            return (cVarExprNode *)GetChild(index);
         }
 
         // return a string representation of the node
